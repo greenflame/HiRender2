@@ -6,6 +6,8 @@
 #include <QColor>
 
 #include "hgeometry.h"
+#include "hcollisoninfo.h"
+#include "hmaterial.h"
 
 class HPolygon
 {
@@ -13,10 +15,10 @@ public:
     HPolygon();
     HPolygon(QVector3D a, QVector3D b, QVector3D c);
 
-    bool detectCollision(QVector3D rayOrigin, QVector3D rayDirecction, QVector3D &collisionPoint);
+    bool detectCollision(const QVector3D &rayOrigin, const QVector3D &rayDirecction, HCollisonInfo &collisionInfo) const;
 
-    void transform(QMatrix4x4 m);
-    HPolygon transformed(QMatrix4x4 m);
+    void transform(const QMatrix4x4 &m);
+    HPolygon transformed(const QMatrix4x4 &m) const;
 
     void generateColor();
 
@@ -29,12 +31,12 @@ public:
     QVector3D c() const;
     void setC(const QVector3D &value);
 
-    QColor getColor() const;
-    void setColor(const QColor &value);
+    HMaterial material() const;
+    void setMaterial(const HMaterial &material);
 
 private:
-    QVector3D av, bv, cv;
-    QColor color;
+    QVector3D a_, b_, c_;
+    HMaterial material_;
 
 };
 

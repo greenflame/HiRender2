@@ -11,8 +11,8 @@
 class HModel
 {
 public:
-    void transform(QMatrix4x4 m);
-    HModel transformed(QMatrix4x4 m);
+    void transform(const QMatrix4x4 &m);
+    HModel transformed(const QMatrix4x4 &m) const;
 
     static HModel loadObj(QString filename);
 

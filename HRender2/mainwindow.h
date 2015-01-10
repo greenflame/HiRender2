@@ -6,8 +6,10 @@
 #include <QMatrix4x4>
 #include <QImage>
 
-#include "htracer.h"
-#include "hmodel.h"
+#include <QTime>
+
+#include "htracer2.h"
+#include "hscene.h"
 
 namespace Ui {
 class MainWindow;
@@ -23,6 +25,7 @@ public:
 
 public slots:
     void on_pushButton_clicked();
+    void on_picture_update(QImage image);
 
 private:
     Ui::MainWindow *ui;

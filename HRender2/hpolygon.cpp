@@ -8,29 +8,36 @@ HPolygon::HPolygon()
 
 HPolygon::HPolygon(QVector3D a, QVector3D b, QVector3D c)
 {
-    av = a;
-    bv = b;
-    cv = c;
+    a_ = a;
+    b_ = b;
+    c_ = c;
     generateColor();
 }
 
-bool HPolygon::detectCollision(QVector3D rayOrigin, QVector3D rayDirecction, QVector3D &collisionPoint)
+bool HPolygon::detectCollision(const QVector3D &rayOrigin, const QVector3D &rayDirecction, HCollisonInfo &collisionInfo) const
 {
-    if (HGeometry::intersectRayPlane(rayOrigin, rayDirecction, av, bv, cv, collisionPoint))
-        if (HGeometry::isPointInTriangle(av, bv, cv, collisionPoint))
-            return true;
+    QVector3D collisionPoint, collisionNormal;
 
-    return false;
+    if (!HGeometry::intersectRayPolygon(rayOrigin, rayDirecction, a_, b_, c_, collisionPoint))
+        return false;
+
+    collisionNormal = QVector3D::crossProduct(b_ - a_, c_ - a_);
+
+    if (QVector3D::dotProduct(collisionNormal, rayDirecction) > 0)
+        collisionNormal = -collisionNormal;
+
+    collisionInfo = HCollisonInfo(collisionPoint, collisionNormal, rayDirecction, material_);
+    return true;
 }
 
-void HPolygon::transform(QMatrix4x4 m)
+void HPolygon::transform(const QMatrix4x4 &m)
 {
-    av = m * av;
-    bv = m * bv;
-    cv = m * cv;
+    a_ = m * a_;
+    b_ = m * b_;
+    c_ = m * c_;
 }
 
-HPolygon HPolygon::transformed(QMatrix4x4 m)
+HPolygon HPolygon::transformed(const QMatrix4x4 &m) const
 {
     HPolygon tmp = *this;
     tmp.transform(m);
@@ -39,42 +46,46 @@ HPolygon HPolygon::transformed(QMatrix4x4 m)
 
 void HPolygon::generateColor()
 {
-    color = QColor::fromRgb(qrand() % 256, qrand() % 256, qrand() % 256);
+//    material_ = QColor::fromRgb(qrand() % 256, qrand() % 256, qrand() % 256);
+    material_.setDiffuseColor(Qt::gray);
 }
 
 QVector3D HPolygon::a() const
 {
-    return av;
+    return a_;
 }
 
 void HPolygon::setA(const QVector3D &value)
 {
-    av = value;
+    a_ = value;
 }
+
 QVector3D HPolygon::b() const
 {
-    return bv;
+    return b_;
 }
 
 void HPolygon::setB(const QVector3D &value)
 {
-    bv = value;
+    b_ = value;
 }
 QVector3D HPolygon::c() const
 {
-    return cv;
+    return c_;
 }
 
 void HPolygon::setC(const QVector3D &value)
 {
-    cv = value;
-}
-QColor HPolygon::getColor() const
-{
-    return color;
+    c_ = value;
 }
 
-void HPolygon::setColor(const QColor &value)
+HMaterial HPolygon::material() const
 {
-    color = value;
+    return material_;
 }
+
+void HPolygon::setMaterial(const HMaterial &material)
+{
+    material_ = material;
+}
+

@@ -1,27 +1,32 @@
-#include "hmodel.h"
+#include "hscene.h"
 
+HScene::HScene()
+{
 
-void HModel::transform(const QMatrix4x4 &m)
+}
+
+HScene::~HScene()
+{
+
+}
+
+void HScene::transform(const QMatrix4x4 &matrix)
 {
     for (int i = 0; i < polygons.length(); i++)
-        polygons[i].transform(m);
+        polygons[i].transform(matrix);
+
+    for (int i = 0; i < lamps.length(); i++)
+        lamps[i] = matrix * lamps[i];
 }
 
-HModel HModel::transformed(const QMatrix4x4 &m) const
-{
-    HModel model = *this;
-    model.transform(m);
-    return model;
-}
-
-HModel HModel::loadObj(QString filename)
+QVector<HPolygon> HScene::loadObj(QString filename)
 {
     QFile inputFile(filename);
     inputFile.open(QIODevice::ReadOnly);
     QTextStream in(&inputFile);
 
     QVector<QVector3D> vertexes;
-    HModel model;
+    QVector<HPolygon> polygons;
 
     while (!in.atEnd())
     {
@@ -43,12 +48,13 @@ HModel HModel::loadObj(QString filename)
                 QVector3D p1 = vertexes[list[1].toInt() - 1];
                 QVector3D p2 = vertexes[list[i].toInt() - 1];
                 QVector3D p3 = vertexes[list[i + 1].toInt() - 1];
-                model.polygons.append(HPolygon(p1, p2, p3));
+                polygons.append(HPolygon(p1, p2, p3));
             }
         }
     }
 
     inputFile.close();
 
-    return model;
+    return polygons;
 }
+
