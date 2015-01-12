@@ -16,25 +16,23 @@ SOURCES += main.cpp\
         mainwindow.cpp \
     hpolygon.cpp \
     hgeometry.cpp \
-    htracer.cpp \
-    hmodel.cpp \
     hcollisoninfo.cpp \
     hmaterial.cpp \
     haccuracy.cpp \
     htracer2.cpp \
     hfrustum.cpp \
-    hscene.cpp
+    hscene.cpp \
+    hray.cpp
 
 HEADERS  += mainwindow.h \
     hpolygon.h \
     hgeometry.h \
-    htracer.h \
-    hmodel.h \
     hcollisoninfo.h \
     hmaterial.h \
     haccuracy.h \
     htracer2.h \
     hfrustum.h \
-    hscene.h
+    hscene.h \
+    hray.h
 
 FORMS    += mainwindow.ui

@@ -4,18 +4,17 @@
 #include <QVector3D>
 #include <QMatrix4x4>
 
+#include <hray.h>
 
 class HGeometry
 {
 public:
-    static bool intersectLinePlane(const QVector3D &l0, const QVector3D &l1,
-                                   const QVector3D &p0, const QVector3D &p1, const QVector3D &p2, QVector3D &resultPoint, float &scale);
+    static bool intersectLinePlane(const HRay &line, const QVector3D &p0, const QVector3D &p1, const QVector3D &p2,
+                                   QVector3D &resultPoint, float &scale);
     static bool isPointInTriangle(const QVector3D &p0, const QVector3D &p1, const QVector3D &p2, const QVector3D &point);
 
-    static bool isIntersectedIntervalPolygon(const QVector3D &intervalBegin, const QVector3D &intervalEnd,
-                                  const QVector3D &p0, const QVector3D &p1, const QVector3D &p2);
-    static bool intersectRayPolygon(const QVector3D &rayOrigin, const QVector3D &rayDirection,
-                                  const QVector3D &p0, const QVector3D &p1, const QVector3D &p2, QVector3D &resultPoint);
+    static bool intersectRayPolygon(const HRay &ray, const QVector3D &p0, const QVector3D &p1, const QVector3D &p2,
+                                    QVector3D &resultPoint);
 
 
 };

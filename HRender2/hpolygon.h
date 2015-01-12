@@ -15,7 +15,7 @@ public:
     HPolygon();
     HPolygon(QVector3D a, QVector3D b, QVector3D c);
 
-    bool detectCollision(const QVector3D &rayOrigin, const QVector3D &rayDirecction, HCollisonInfo &collisionInfo) const;
+    bool detectCollision(const HRay &ray, HCollisonInfo &collisionInfo) const;
 
     void transform(const QMatrix4x4 &m);
     HPolygon transformed(const QMatrix4x4 &m) const;

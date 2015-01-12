@@ -14,19 +14,19 @@ HPolygon::HPolygon(QVector3D a, QVector3D b, QVector3D c)
     generateColor();
 }
 
-bool HPolygon::detectCollision(const QVector3D &rayOrigin, const QVector3D &rayDirecction, HCollisonInfo &collisionInfo) const
+bool HPolygon::detectCollision(const HRay &ray, HCollisonInfo &collisionInfo) const
 {
     QVector3D collisionPoint, collisionNormal;
 
-    if (!HGeometry::intersectRayPolygon(rayOrigin, rayDirecction, a_, b_, c_, collisionPoint))
+    if (!HGeometry::intersectRayPolygon(ray, a_, b_, c_, collisionPoint))
         return false;
 
     collisionNormal = QVector3D::crossProduct(b_ - a_, c_ - a_);
 
-    if (QVector3D::dotProduct(collisionNormal, rayDirecction) > 0)
+    if (QVector3D::dotProduct(collisionNormal, ray.direction()) > 0)
         collisionNormal = -collisionNormal;
 
-    collisionInfo = HCollisonInfo(collisionPoint, collisionNormal, rayDirecction, material_);
+    collisionInfo = HCollisonInfo(collisionPoint, collisionNormal, -ray.direction(), material_);
     return true;
 }
 

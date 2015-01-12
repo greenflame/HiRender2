@@ -25,7 +25,7 @@ public:
 
 public slots:
     void on_pushButton_clicked();
-    void on_picture_update(QImage image);
+    void onPictureUpdate(QImage image);
 
 private:
     Ui::MainWindow *ui;

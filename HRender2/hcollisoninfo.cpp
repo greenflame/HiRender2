@@ -21,16 +21,6 @@ void HCollisonInfo::setNormal(const QVector3D &value)
     normal_ = value;
 }
 
-QVector3D HCollisonInfo::rayDirection() const
-{
-    return rayDirection_;
-}
-
-void HCollisonInfo::setRayDirection(const QVector3D &value)
-{
-    rayDirection_ = value;
-}
-
 HMaterial HCollisonInfo::material() const
 {
     return material_;
@@ -40,6 +30,17 @@ void HCollisonInfo::setMaterial(const HMaterial &material)
 {
     material_ = material;
 }
+
+QVector3D HCollisonInfo::directionToEye() const
+{
+    return directionToEye_;
+}
+
+void HCollisonInfo::setDirectionToEye(const QVector3D &directionToEye)
+{
+    directionToEye_ = directionToEye;
+}
+
 
 
 

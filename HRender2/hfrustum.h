@@ -5,7 +5,7 @@
 class HFrustum
 {
 public:
-    HFrustum() {};
+    HFrustum() {}
     HFrustum(float left, float right, float bottom, float top, float nearPlane, float farPlane)
         : left_(left), right_(right), bottom_(bottom), top_(top), nearPlane_(nearPlane), farPlane_(farPlane) {}
 

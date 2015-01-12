@@ -3,6 +3,11 @@
 
 #include <QObject>
 #include <QImage>
+#include <QPainter>
+#include <QCoreApplication>
+#include <QTime>
+
+#include <math.h>
 
 #include "hfrustum.h"
 #include "hpolygon.h"
@@ -16,16 +21,18 @@ public:
     ~HTracer2();
 
     void render();
-
-    //unind
-    QImage traceRays(int imageHeight, int imageWidth, float left, float right, float bottom, float top, float nearPlane/*, float farPlane*/);
-    QColor traceRay(const QVector3D &rayOrigin, const QVector3D &rayDirecction);
-
-    bool findClosestCollision(const QVector3D &rayOrigin, const QVector3D &rayDirecction, HCollisonInfo &collisionInfo) const;
+    bool getNextTile(QRect &tile);
+    void processTile(const QRect &tile);
+    void processPixel(const QPoint &pixelPosition);
 
     float lambertLightness(const HCollisonInfo &ci) const;
     bool isPointInShadow(const QVector3D point) const;
 
+    //internal critical------
+    HRay matchRayForPixel(const QPoint &pixelPosition);
+    bool findClosestCollision(const HRay &ray, HCollisonInfo &collisionInfo) const;
+
+    static float length(const QPoint &p1, const QPoint &p2);
     static QColor mixColors(const QColor &c1, const QColor &c2, float k1, float k2);
 
 
@@ -49,13 +56,13 @@ public slots:
 
 private:
     HScene scene_;
-
-    QSize imageSize_;
     HFrustum cameraFrustum_;
 
+    QSize imageSize_;
     QSize tileSize_;
 
     QImage resultImage_;
+    QImage renderedTilesMap_;
 
 };
 

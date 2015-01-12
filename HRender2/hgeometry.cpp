@@ -1,17 +1,17 @@
 #include "hgeometry.h"
 
 
-bool HGeometry::intersectLinePlane(const QVector3D &pointOnLine, const QVector3D &lineDirection, const QVector3D &p0, const QVector3D &p1, const QVector3D &p2, QVector3D &resultPoint, float &scale)
+bool HGeometry::intersectLinePlane(const HRay &line, const QVector3D &p0, const QVector3D &p1, const QVector3D &p2, QVector3D &resultPoint, float &scale)
 {
     QVector3D planeNormal = QVector3D::crossProduct(p1 - p0, p2 - p0);
 
-    if (qFuzzyCompare(QVector3D::dotProduct(planeNormal, lineDirection), 0))
+    if (qFuzzyCompare(QVector3D::dotProduct(planeNormal, line.direction()), 0))
         return false;
 
-    float s = QVector3D::dotProduct(planeNormal, p0 - pointOnLine)/QVector3D::dotProduct(planeNormal, lineDirection);
+    float s = QVector3D::dotProduct(planeNormal, p0 - line.origin())/QVector3D::dotProduct(planeNormal, line.direction());
 
     scale = s;
-    resultPoint = pointOnLine + lineDirection * s;
+    resultPoint = line.origin() + line.direction() * s;
     return true;
 }
 
@@ -25,27 +25,13 @@ bool HGeometry::isPointInTriangle(const QVector3D &p0, const QVector3D &p1, cons
     return qFuzzyCompare(s, s1 + s2 + s3);
 }
 
-bool HGeometry::isIntersectedIntervalPolygon(const QVector3D &intervalBegin, const QVector3D &intervalEnd, const QVector3D &p0, const QVector3D &p1, const QVector3D &p2)
+bool HGeometry::intersectRayPolygon(const HRay &ray, const QVector3D &p0, const QVector3D &p1, const QVector3D &p2, QVector3D &resultPoint)
 {
     QVector3D ip;
     float scale;
-    if (!intersectLinePlane(intervalBegin, intervalEnd - intervalBegin, p0, p1, p2, ip, scale))
+    if (!intersectLinePlane(ray, p0, p1, p2, ip, scale))
         return false;
-    if (scale < 0.000001 || scale > 0.999999)
-        return false;
-    if (!isPointInTriangle(p0, p1, p2, ip))
-        return false;
-
-    return true;
-}
-
-bool HGeometry::intersectRayPolygon(const QVector3D &rayOrigin, const QVector3D &rayDirection, const QVector3D &p0, const QVector3D &p1, const QVector3D &p2, QVector3D &resultPoint)
-{
-    QVector3D ip;
-    float scale;
-    if (!intersectLinePlane(rayOrigin, rayDirection, p0, p1, p2, ip, scale))
-        return false;
-    if (scale < 0.000001)
+    if (scale < 0.0001)
         return false;
     if (!isPointInTriangle(p0, p1, p2, ip))
         return false;
