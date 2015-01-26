@@ -2,7 +2,7 @@
 
 bool HAccuracy::floatEqual(float a, float b)
 {
-    return abs(a - b) < EPSILON;
+    return fabsf(a - b) < EPSILON;
 }
 
 bool HAccuracy::floatLessOrEqual(float a, float b)

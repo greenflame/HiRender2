@@ -6,8 +6,9 @@
 class HRay
 {
 public:
-    HRay() {}
-    HRay(const QVector3D &origin, const QVector3D &direction) : origin_(origin), direction_(direction) {}
+    HRay();
+    HRay(const QVector3D &origin, const QVector3D &direction);
+    ~HRay();
 
     QVector3D origin() const;
     void setOrigin(const QVector3D &origin);

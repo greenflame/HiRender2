@@ -1,22 +1,37 @@
-#ifndef HSCENE_H
-#define HSCENE_H
+//#ifndef HSCENE_H
+//#define HSCENE_H
 
-#include <QFile>
+//#include <QFile>
 
-#include "hpolygon.h"
+//#include "hpolygoncollider.h"
+//#include "hboundingspherecollider.h"
+//#include "hspherecollider.h"
 
-class HScene
-{
-public:
-    HScene();
-    ~HScene();
+//class HScene
+//{
+//public:
+//    HScene();
+//    HScene(const HScene &scene);
+//    ~HScene();
 
-    void transform(const QMatrix4x4 &matrix);
+//    HScene &operator =(const HScene &scene);
 
-    static QVector<HPolygon> loadObj(QString filename);
+//    void loadObj(QString filename);
+//    void destructColliders();
 
-    QVector<HPolygon> polygons;
-    QVector<QVector3D> lamps;
-};
+//    void transform(const QMatrix4x4 &matrix);
 
-#endif // HSCENE_H
+//    void buildTree();
+//    void destructTree();
+
+//    QVector<ICollider *> colliders;
+//    QVector<QVector3D> lamps;
+
+//    ICollider *treeHead() const;
+//    void setTreeHead(ICollider *treeHead);
+
+//    ICollider *treeHead_;
+//private:
+//};
+
+//#endif // HSCENE_H

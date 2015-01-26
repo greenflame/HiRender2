@@ -1,5 +1,26 @@
 #include "hfrustum.h"
 
+
+HFrustum::HFrustum()
+{
+
+}
+
+HFrustum::HFrustum(float left, float right, float bottom, float top, float nearPlane, float farPlane)
+{
+    setLeft(left);
+    setRight(right);
+    setBottom(bottom);
+    setTop(top);
+    setNearPlane(nearPlane);
+    setFarPlane(farPlane);
+}
+
+HFrustum::~HFrustum()
+{
+
+}
+
 float HFrustum::left() const
 {
     return left_;

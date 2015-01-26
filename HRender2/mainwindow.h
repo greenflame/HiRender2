@@ -7,9 +7,12 @@
 #include <QImage>
 
 #include <QTime>
+#include <QTimer>
+#include <QColor>
 
-#include "htracer2.h"
+#include "htracer3.h"
 #include "hscene.h"
+#include "hspherecollider.h"
 
 namespace Ui {
 class MainWindow;
@@ -25,11 +28,15 @@ public:
 
 public slots:
     void on_pushButton_clicked();
-    void onPictureUpdate(QImage image);
+
+    void onTemporaryImageUpdated(QImage image);
+    void onRenderMessage(QString message);
 
 private:
     Ui::MainWindow *ui;
 
+    void loadObj(HTracer3 &tracer, const QString &fileName);
+    void loadMtl(HTracer3 &tracer, const QString &fileName);
 };
 
 #endif // MAINWINDOW_H
