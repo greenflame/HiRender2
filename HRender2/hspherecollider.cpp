@@ -11,7 +11,7 @@ HSphereCollider::HSphereCollider(QVector3D center, float radius)
     setRadius(radius);
 }
 
-HSphereCollider::HSphereCollider(QVector3D center, float radius, HMaterial material)
+HSphereCollider::HSphereCollider(QVector3D center, float radius, HMaterial *material)
 {
     setCenter(center);
     setRadius(radius);
@@ -27,7 +27,7 @@ HSphereCollider::HSphereCollider(const HSphereCollider &collider)
 
 bool HSphereCollider::detectCollision(const HRay &ray, HCollision &collisionInfo) const
 {
-    if (center().distanceToLine(ray.origin(), ray.direction().normalized()) > radius())    //no intersections
+    if (center().distanceToLine(ray.origin(), ray.direction()) > radius())    //no intersections
         return false;
 
     if (HAccuracy::floatEqual(center().distanceToPoint(ray.origin()), radius()) &&
@@ -41,8 +41,8 @@ bool HSphereCollider::detectCollision(const HRay &ray, HCollision &collisionInfo
     float l = sqrtf(powf(radius(), 2) -
                     powf((center() - proj).length(), 2));
 
-    QVector3D r1 = proj + ray.direction().normalized() * l;
-    QVector3D r2 = proj - ray.direction().normalized() * l;
+    QVector3D r1 = proj + ray.direction() * l;
+    QVector3D r2 = proj - ray.direction() * l;
 
 
     QVector3D point, normal;
@@ -113,12 +113,13 @@ void HSphereCollider::setRadius(float radius)
 {
     radius_ = radius;
 }
-HMaterial HSphereCollider::material() const
+
+HMaterial *HSphereCollider::material() const
 {
     return material_;
 }
 
-void HSphereCollider::setMaterial(HMaterial material)
+void HSphereCollider::setMaterial(HMaterial *material)
 {
     material_ = material;
 }

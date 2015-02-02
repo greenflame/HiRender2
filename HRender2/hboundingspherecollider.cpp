@@ -22,7 +22,7 @@ HBoundingSphereCollider::~HBoundingSphereCollider()
 
 bool HBoundingSphereCollider::detectCollision(const HRay &ray, HCollision &collisionInfo) const
 {
-    if (center_.distanceToLine(ray.origin(), ray.direction().normalized()) > radius_)
+    if (center_.distanceToLine(ray.origin(), ray.direction()) > radius_)
         return false;
 
     HCollision ci;

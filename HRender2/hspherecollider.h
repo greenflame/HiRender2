@@ -16,7 +16,7 @@ public:
     // Constructors
     HSphereCollider();
     HSphereCollider(QVector3D center, float radius);
-    HSphereCollider(QVector3D center, float radius, HMaterial material);
+    HSphereCollider(QVector3D center, float radius, HMaterial *material);
     HSphereCollider(const HSphereCollider &collider);
 
     // ICollider interface
@@ -33,13 +33,13 @@ public:
     float radius() const;
     void setRadius(float radius);
 
-    HMaterial material() const;
-    void setMaterial(HMaterial material);
+    HMaterial *material() const;
+    void setMaterial(HMaterial *material);
 
 private:
     QVector3D center_;
     float radius_;
-    HMaterial material_;
+    HMaterial *material_;
 };
 
 #endif // HSPHERECOLLIDER_H

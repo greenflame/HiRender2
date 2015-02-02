@@ -16,33 +16,29 @@ SOURCES += main.cpp\
         mainwindow.cpp \
     hmaterial.cpp \
     haccuracy.cpp \
-    htracer2.cpp \
     hfrustum.cpp \
-    hscene.cpp \
     hray.cpp \
     icollider.cpp \
     hpolygoncollider.cpp \
     hspherecollider.cpp \
     hboundingspherecollider.cpp \
-    htracer.cpp \
     htracer3.cpp \
     hcollision.cpp \
-    hsphere.cpp
+    hsphere.cpp \
+    ishader.cpp
 
 HEADERS  += mainwindow.h \
     hmaterial.h \
     haccuracy.h \
-    htracer2.h \
     hfrustum.h \
-    hscene.h \
     hray.h \
     icollider.h \
     hpolygoncollider.h \
     hspherecollider.h \
     hboundingspherecollider.h \
-    htracer.h \
     htracer3.h \
     hcollision.h \
-    hsphere.h
+    hsphere.h \
+    ishader.h
 
 FORMS    += mainwindow.ui

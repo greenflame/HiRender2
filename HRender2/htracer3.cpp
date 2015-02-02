@@ -13,6 +13,7 @@ HTracer3::HTracer3(QObject *parent) : QObject(parent)
 HTracer3::~HTracer3()
 {
     deleteColliders();
+    deleteMaterials();
 }
 
 QImage HTracer3::render()
@@ -21,6 +22,9 @@ QImage HTracer3::render()
 
     QImage resultImage(imageSize(), QImage::Format_ARGB32);
     resultImage.fill(backgroundColor().rgba());
+
+    if (colliders_.length() == 0)
+        return resultImage;
 
     initializeTileMap();
 
@@ -38,7 +42,6 @@ QImage HTracer3::render()
         renderRect(resultImage, tile);
         renderingTime += timer.elapsed();
         emit onTemporaryImageUpdated(resultImage);
-        QThread::sleep(5);
     }
     emit onRenderMessage(tr("Ok. Time: %0.").arg(renderingTime));
 
@@ -50,17 +53,51 @@ QImage HTracer3::render()
 
 void HTracer3::addPolygon(const QVector3D &v1, const QVector3D &v2, const QVector3D &v3, const QString &materialName)
 {
-    colliders_.append(new HPolygonCollider(v1, v2, v3, materials_[materialName]));
+    QString resultMaterialName = materialName;
+    if (!materials_.contains(materialName))
+        resultMaterialName = "default";
+
+    colliders_.append(new HPolygonCollider(v1, v2, v3, materials_[resultMaterialName]));
+}
+
+void HTracer3::addPolygon(const QVector3D &v1, const QVector3D &v2, const QVector3D &v3,
+                          const QVector3D &n1, const QVector3D &n2, const QVector3D &n3, const QString &materialName)
+{
+    QString resultMaterialName = materialName;
+    if (!materials_.contains(materialName))
+        resultMaterialName = "default";
+
+    HPolygonCollider *collider = new HPolygonCollider(v1, v2, v3, materials_[resultMaterialName]);
+    collider->setN1(n1);
+    collider->setN2(n2);
+    collider->setN3(n3);
+    collider->setUseNormals(true);
+
+    colliders_.append(collider);
+}
+
+void HTracer3::addSphere(const QVector3D &center, float radius, const QString &materialName)
+{
+    QString resultMaterialName = materialName;
+    if (!materials_.contains(materialName))
+        resultMaterialName = "default";
+
+    colliders_.append(new HSphereCollider(center, radius, materials_[resultMaterialName]));
 }
 
 void HTracer3::addMaterial(const QString &name, const QColor &diffuseColor)
 {
-    materials_.insert(name, HMaterial(diffuseColor));
+    materials_.insert(name, new HMaterial(diffuseColor));
 }
 
 void HTracer3::addPointLight(const QVector3D &position)
 {
     pointLights_.append(position);
+}
+
+void HTracer3::addTexture(const QString &name, const QImage &image)
+{
+    textures_.insert(name, new QImage(image));
 }
 
 void HTracer3::transformScene(const QMatrix4x4 &matrix)
@@ -236,6 +273,26 @@ void HTracer3::deleteBoundingTree()
     delete boundingTreeHead_;
 }
 
+void HTracer3::deleteMaterials()
+{
+    QList<HMaterial *> pointers = materials_.values();
+
+    for (int i = 0; i < pointers.length(); i++)
+        delete pointers.at(i);
+
+    materials_.clear();
+}
+
+void HTracer3::deleteTextures()
+{
+    QList<QImage*> pointers = textures_.values();
+
+    for (int i = 0; i < pointers.length(); i++)
+        delete pointers.at(i);
+
+    textures_.clear();
+}
+
 float HTracer3::lambertLightScheme(const HCollision &ci) const
 {
     float maxLightness = 0;
@@ -291,6 +348,25 @@ float HTracer3::shadowLightScheme(const HCollision &ci) const
     return 0;
 }
 
+QColor HTracer3::skyMap(const QString &textureName, const HRay &ray) const
+{
+    QImage &texture = *textures_[textureName];
+
+    float yAngle = acosf(QVector3D::dotProduct(QVector3D(0, 1, 0), ray.direction()));
+    QVector3D xzProjection = QVector3D(ray.direction().x(), 0, ray.direction().z()).normalized();
+    float zAngle = acosf(QVector3D::dotProduct(QVector3D(0, 0, 1), xzProjection));
+    float xAngle = acosf(QVector3D::dotProduct(QVector3D(1, 0, 0), xzProjection));
+
+    if (xAngle < M_PI / 2)
+        zAngle = 2 * M_PI - zAngle;
+
+    QPoint textureCoordinate;
+    textureCoordinate.setX(texture.width() * zAngle / (M_PI * 2));
+    textureCoordinate.setY(texture.height() * yAngle / M_PI);
+
+    return texture.pixel(textureCoordinate);
+}
+
 void HTracer3::renderRect(QImage &image, const QRect &rect) const
 {
     for (int y = rect.top(); y < rect.top() + rect.height(); y++)
@@ -310,9 +386,15 @@ void HTracer3::renderPixel(QImage &image, const QPoint &pixel) const
     {
         float lightness;
         float lsl = qMin(lambertLightScheme(ci), shadowLightScheme(ci));
-        float ao = ambientOcclusionLightScheme(ci, 25);
-        lightness = ao * 0.6 + lsl * 0.4;
-        resultColor = mixColors(ci.material().diffuseColor(), Qt::black, lightness, 1 - lightness);
+//        float ao = ambientOcclusionLightScheme(ci, 25);
+//        lightness = ao * 0.6 + lsl * 0.4;
+        lightness = lsl;
+//        lightness = ao;
+        resultColor = mixColors(ci.material()->diffuseColor(), Qt::black, lightness, 1 - lightness);
+    }
+    else
+    {
+        resultColor = skyMap("sky", ray);
     }
 
     image.setPixel(pixel, resultColor.rgba());

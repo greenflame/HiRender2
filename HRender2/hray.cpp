@@ -34,5 +34,5 @@ QVector3D HRay::direction() const
 
 void HRay::setDirection(const QVector3D &direction)
 {
-    direction_ = direction;
+    direction_ = direction.normalized();
 }

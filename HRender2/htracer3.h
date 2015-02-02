@@ -19,6 +19,7 @@
 #include "hfrustum.h"
 #include "hboundingspherecollider.h"
 #include "hpolygoncollider.h"
+#include "hspherecollider.h"
 #include "icollider.h"
 
 class HTracer3 : public QObject
@@ -31,8 +32,16 @@ public:
     QImage render();
 
     void addPolygon(const QVector3D &v1, const QVector3D &v2, const QVector3D &v3, const QString &materialName = "default");
+
+    void addPolygon(const QVector3D &v1, const QVector3D &v2, const QVector3D &v3,
+                    const QVector3D &n1, const QVector3D &n2, const QVector3D &n3, const QString &materialName = "default");
+
+    void addSphere(const QVector3D &center, float radius, const QString &materialName = "default");
+
     void addMaterial(const QString &name, const QColor &diffuseColor);
     void addPointLight(const QVector3D &position);
+
+    void addTexture(const QString &name, const QImage &image);
 
     void transformScene(const QMatrix4x4 &matrix);
 
@@ -82,15 +91,23 @@ private:
     void deleteBoundingTree();
 
     // Materials
-    QMap<QString, HMaterial> materials_;
+    QMap<QString, HMaterial*> materials_;
+    void deleteMaterials();
 
     // Lamps
     QVector<QVector3D> pointLights_;
+
+    // Textures
+    QMap<QString, QImage*> textures_;
+    void deleteTextures();
 
     // Light schemes
     float lambertLightScheme(const HCollision &ci) const;
     float ambientOcclusionLightScheme(const HCollision &ci, int samples) const;
     float shadowLightScheme(const HCollision &ci) const;
+
+    // Shaders
+    QColor skyMap(const QString &textureName, const HRay &ray) const;
 
     // STH... render
     void renderRect(QImage &image, const QRect &rect) const;
