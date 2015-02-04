@@ -14,7 +14,8 @@
 #include <QString>
 #include <QThread>
 
-#include "hmaterial.h"
+#include "ishader.h"
+#include "hphongshader.h"
 #include "icollider.h"
 #include "hfrustum.h"
 #include "hboundingspherecollider.h"
@@ -31,22 +32,27 @@ public:
 
     QImage render();
 
-    void addPolygon(const QVector3D &v1, const QVector3D &v2, const QVector3D &v3, const QString &materialName = "default");
+    // Colliders
+    void addPolygon(const QVector3D &v1, const QVector3D &v2, const QVector3D &v3, const QString &shaderName = "default");
 
     void addPolygon(const QVector3D &v1, const QVector3D &v2, const QVector3D &v3,
-                    const QVector3D &n1, const QVector3D &n2, const QVector3D &n3, const QString &materialName = "default");
+                    const QVector3D &n1, const QVector3D &n2, const QVector3D &n3, const QString &shaderName = "default");
 
-    void addSphere(const QVector3D &center, float radius, const QString &materialName = "default");
+    void addSphere(const QVector3D &center, float radius, const QString &shaderName = "default");
 
-    void addMaterial(const QString &name, const QColor &diffuseColor);
+    // Shaders
+    void addPhongShader(const QString &name, const QColor &diffuseColor);
+
+    // Lights
     void addPointLight(const QVector3D &position);
 
+    //Textures
     void addTexture(const QString &name, const QImage &image);
 
+    // Scene
     void transformScene(const QMatrix4x4 &matrix);
 
     // Accesors
-
     HFrustum cameraFrustum() const;
     void setCameraFrustum(const HFrustum &cameraFrustum);
 
@@ -64,6 +70,8 @@ signals:
     void onRenderMessage(QString message);
 
 private:
+    friend class HPhongShader;
+
     // Camera settings
     HFrustum cameraFrustum_;
 
@@ -91,8 +99,8 @@ private:
     void deleteBoundingTree();
 
     // Materials
-    QMap<QString, HMaterial*> materials_;
-    void deleteMaterials();
+    QMap<QString, IShader*> shaders_;
+    void deleteShaders();
 
     // Lamps
     QVector<QVector3D> pointLights_;
@@ -102,9 +110,7 @@ private:
     void deleteTextures();
 
     // Light schemes
-    float lambertLightScheme(const HCollision &ci) const;
     float ambientOcclusionLightScheme(const HCollision &ci, int samples) const;
-    float shadowLightScheme(const HCollision &ci) const;
 
     // Shaders
     QColor skyMap(const QString &textureName, const HRay &ray) const;
@@ -112,9 +118,9 @@ private:
     // STH... render
     void renderRect(QImage &image, const QRect &rect) const;
     void renderPixel(QImage &image, const QPoint &pixel) const;
+    QColor traceRay(const HRay &ray) const;
 
     HRay computeRayForPixel(const QPoint &point) const;
-    bool computeCollision(const HRay &ray, HCollision &collisionInfo) const;
 
     // STH.. static
     static QColor mixColors(const QColor &c1, const QColor &c2, float k1, float k2);

@@ -3,14 +3,16 @@
 
 #include <QColor>
 
-#include <hcollision.h>
+#include "hcollision.h"
+
+class HTracer3;
 
 class IShader
 {
 public:
-    virtual ~IShader() = 0;
+    virtual ~IShader();
 
-    virtual QColor process(const HCollision &collision) const = 0;
+    virtual QColor process(const HCollision &collision, const HTracer3 &tracer) const = 0;
 };
 
 #endif // ISHADER_H

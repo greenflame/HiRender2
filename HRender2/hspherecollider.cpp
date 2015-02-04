@@ -11,21 +11,93 @@ HSphereCollider::HSphereCollider(QVector3D center, float radius)
     setRadius(radius);
 }
 
-HSphereCollider::HSphereCollider(QVector3D center, float radius, HMaterial *material)
+HSphereCollider::HSphereCollider(QVector3D center, float radius, IShader *shader)
 {
     setCenter(center);
     setRadius(radius);
-    setMaterial(material);
+    setShader(shader);
 }
 
 HSphereCollider::HSphereCollider(const HSphereCollider &collider)
 {
-    setCenter(collider.center());
-    setRadius(collider.radius());
-    setMaterial(collider.material());
+    *this = collider;
 }
 
-bool HSphereCollider::detectCollision(const HRay &ray, HCollision &collisionInfo) const
+bool HSphereCollider::detectCollision(const HRay &ray, QVector3D &collisionPoint, ICollider **collider) const
+{
+    HCollision collision;
+    bool isCollisionExists = localDetectCollision(ray, collision);
+
+    if (isCollisionExists)
+    {
+        *collider = const_cast<HSphereCollider*>(this);
+        collisionPoint = collision.point();
+        return true;
+    }
+
+    return false;
+}
+
+bool HSphereCollider::processCollision(const HRay &ray, const HTracer3 &tracer, QColor &resultColor) const
+{
+    HCollision collision;
+    bool isCollisionExists = localDetectCollision(ray, collision);
+
+    if (isCollisionExists)
+    {
+        resultColor = shader_->process(collision, tracer);
+        return true;
+    }
+
+    return false;
+}
+
+HSphere HSphereCollider::getBoundingSphere() const
+{
+    return HSphere(center(), radius());
+}
+
+ICollider *HSphereCollider::clone() const
+{
+    return new HSphereCollider(*this);
+}
+
+void HSphereCollider::transform(const QMatrix4x4 &m)
+{
+    setCenter(m * center());
+}
+
+QVector3D HSphereCollider::center() const
+{
+    return center_;
+}
+
+void HSphereCollider::setCenter(const QVector3D &center)
+{
+    center_ = center;
+}
+
+float HSphereCollider::radius() const
+{
+    return radius_;
+}
+
+void HSphereCollider::setRadius(float radius)
+{
+    radius_ = radius;
+}
+
+IShader *HSphereCollider::shader() const
+{
+    return shader_;
+}
+
+void HSphereCollider::setShader(IShader *shader)
+{
+    shader_ = shader;
+}
+
+bool HSphereCollider::localDetectCollision(const HRay &ray, HCollision &collisionInfo) const
 {
     if (center().distanceToLine(ray.origin(), ray.direction()) > radius())    //no intersections
         return false;
@@ -75,52 +147,6 @@ bool HSphereCollider::detectCollision(const HRay &ray, HCollision &collisionInfo
         }
     }
 
-    collisionInfo = HCollision(point, normal, -ray.direction(), material());
+    collisionInfo = HCollision(point, normal, -ray.direction());
     return true;
 }
-
-HSphere HSphereCollider::getBoundingSphere() const
-{
-    return HSphere(center(), radius());
-}
-
-ICollider *HSphereCollider::clone() const
-{
-    return new HSphereCollider(*this);
-}
-
-void HSphereCollider::transform(const QMatrix4x4 &m)
-{
-    setCenter(m * center());
-}
-
-QVector3D HSphereCollider::center() const
-{
-    return center_;
-}
-
-void HSphereCollider::setCenter(const QVector3D &center)
-{
-    center_ = center;
-}
-
-float HSphereCollider::radius() const
-{
-    return radius_;
-}
-
-void HSphereCollider::setRadius(float radius)
-{
-    radius_ = radius;
-}
-
-HMaterial *HSphereCollider::material() const
-{
-    return material_;
-}
-
-void HSphereCollider::setMaterial(HMaterial *material)
-{
-    material_ = material;
-}
-

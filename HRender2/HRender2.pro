@@ -25,7 +25,8 @@ SOURCES += main.cpp\
     htracer3.cpp \
     hcollision.cpp \
     hsphere.cpp \
-    ishader.cpp
+    ishader.cpp \
+    hphongshader.cpp
 
 HEADERS  += mainwindow.h \
     hmaterial.h \
@@ -39,6 +40,7 @@ HEADERS  += mainwindow.h \
     htracer3.h \
     hcollision.h \
     hsphere.h \
-    ishader.h
+    ishader.h \
+    hphongshader.h
 
 FORMS    += mainwindow.ui

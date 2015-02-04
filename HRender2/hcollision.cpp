@@ -6,12 +6,11 @@ HCollision::HCollision()
 
 }
 
-HCollision::HCollision(QVector3D point, QVector3D normal, QVector3D directionToEye, HMaterial *material)
+HCollision::HCollision(QVector3D point, QVector3D normal, QVector3D directionToEye)
 {
     setPoint(point);
     setNormal(normal);
     setDirectionToEye(directionToEye);
-    setMaterial(material);
 }
 
 HCollision::~HCollision()
@@ -36,7 +35,7 @@ QVector3D HCollision::normal() const
 
 void HCollision::setNormal(const QVector3D &normal)
 {
-    normal_ = normal;
+    normal_ = normal.normalized();
 }
 
 QVector3D HCollision::directionToEye() const
@@ -47,14 +46,4 @@ QVector3D HCollision::directionToEye() const
 void HCollision::setDirectionToEye(const QVector3D &directionToEye)
 {
     directionToEye_ = directionToEye;
-}
-
-HMaterial *HCollision::material() const
-{
-    return material_;
-}
-
-void HCollision::setMaterial(HMaterial *material)
-{
-    material_ = material;
 }

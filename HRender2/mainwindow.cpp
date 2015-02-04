@@ -16,7 +16,7 @@ MainWindow::~MainWindow()
 
 void MainWindow::on_pushButton_clicked()
 {
-    objPath = "/Users/Alexander/Desktop/head.obj";
+    objPath = "/Users/Alexander/Desktop/planet.obj";
     resultPath = "/Users/Alexander/Desktop/sphere.png";
 
 //    objPath = "planet.obj";
@@ -26,20 +26,23 @@ void MainWindow::on_pushButton_clicked()
 
     tracer3.addTexture("sky", QImage("/Users/Alexander/Desktop/pano1.jpg"));
 
-    int lines = 500;
+    int lines = 720;
     float k = 16.0 / 9.0;
 
     tracer3.setImageSize(QSize(lines * k, lines));
-    tracer3.setCameraFrustum(HFrustum(-0.5 * k, 0.5 * k, -0.5, 0.5, 0.6, 100));
+    tracer3.setCameraFrustum(HFrustum(-0.5 * k, 0.5 * k, -0.5, 0.5, 4, 100));
 
 //    loadObj(tracer3, objPath);
     tracer3.addSphere(QVector3D(0, 0, 0), 1);
 
     QMatrix4x4 m;
 //    m.translate(-0.35, 0.5, -20);
-    m.translate(0, 0, -3);
-    tracer3.addPointLight(QVector3D(2, -1, 5));
+    m.translate(0, 0, -10);
+//    m.rotate(30, QVector3D(0, 1, 0));
     tracer3.transformScene(m);
+        tracer3.addPointLight(QVector3D(2, -1, 5));
+//        tracer3.addPointLight(QVector3D(0, 0, 0));
+//    tracer3.setTileSize(QSize(25, 25));
 
     connect(&tracer3, SIGNAL(onRenderMessage(QString)), this, SLOT(onRenderMessage(QString)));
     connect(&tracer3, SIGNAL(onTemporaryImageUpdated(QImage)), this, SLOT(onTemporaryImageUpdated(QImage)));
@@ -224,7 +227,7 @@ bool MainWindow::loadMtl(HTracer3 &tracer, const QString &fileName)
         {
             if (!isFirstMaterial)
             {
-                tracer.addMaterial(materialName, diffuseColor);
+                tracer.addPhongShader(materialName, diffuseColor);
             }
             else
             {

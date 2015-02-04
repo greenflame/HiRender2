@@ -7,11 +7,11 @@ HPolygonCollider::HPolygonCollider()
     setUseTexture(false);
 }
 
-HPolygonCollider::HPolygonCollider(QVector3D v1, QVector3D v2, QVector3D v3, HMaterial *material)
+HPolygonCollider::HPolygonCollider(QVector3D v1, QVector3D v2, QVector3D v3, IShader *shader)
 {
     setV1(v1); setV2(v2); setV3(v3);
 
-    setMaterial(material);
+    setShader(shader);
 
     setUseNormals(false);
     setUseTexture(false);
@@ -22,7 +22,14 @@ HPolygonCollider::HPolygonCollider(const HPolygonCollider &collider)
     *this = collider;
 }
 
-bool HPolygonCollider::detectCollision(const HRay &ray, HCollision &collisionInfo) const
+bool HPolygonCollider::detectCollision(const HRay &ray, QVector3D &collisionPoint, ICollider **collider) const
+{
+    *collider = const_cast<HPolygonCollider*>(this);
+    bool isCollisionPointExists = computeCollisionPoint(ray, collisionPoint);
+    return isCollisionPointExists;
+}
+
+bool HPolygonCollider::processCollision(const HRay &ray, const HTracer3 &tracer, QColor &resultColor) const
 {
     QVector3D collisionPoint;
     bool isCollisionPointExists = computeCollisionPoint(ray, collisionPoint);
@@ -30,8 +37,9 @@ bool HPolygonCollider::detectCollision(const HRay &ray, HCollision &collisionInf
         return false;
 
     QVector3D collisionNormal = computeNormal(ray, collisionPoint);
+    HCollision collision = HCollision(collisionPoint, collisionNormal, -ray.direction());
 
-    collisionInfo = HCollision(collisionPoint, collisionNormal, -ray.direction(), material());
+    resultColor = shader_->process(collision, tracer);
     return true;
 }
 
@@ -56,7 +64,9 @@ void HPolygonCollider::transform(const QMatrix4x4 &m)
     setV2(m * v2());
     setV3(m * v3());
 
-//    QMatrix im = m.toAffine().inverted();
+//    QMatrix4x4 im = m.inverted().;
+
+//    im.setColumn(3, QVector4D(0, 0, 0, 1));
 
 //    setN1(im * n1());
 //    setN2(im * n2());
@@ -152,15 +162,16 @@ void HPolygonCollider::setT3(const QVector3D &t3)
     t3_ = t3;
 }
 
-HMaterial *HPolygonCollider::material() const
+IShader *HPolygonCollider::shader() const
 {
-    return material_;
+    return shader_;
 }
 
-void HPolygonCollider::setMaterial(HMaterial *material)
+void HPolygonCollider::setShader(IShader *shader)
 {
-    material_ = material;
+    shader_ = shader;
 }
+
 QImage *HPolygonCollider::texture() const
 {
     return texture_;

@@ -20,39 +20,56 @@ HBoundingSphereCollider::~HBoundingSphereCollider()
         delete colliders_.at(i);
 }
 
-bool HBoundingSphereCollider::detectCollision(const HRay &ray, HCollision &collisionInfo) const
+bool HBoundingSphereCollider::detectCollision(const HRay &ray, QVector3D &collisionPoint, ICollider **collider) const
 {
     if (center_.distanceToLine(ray.origin(), ray.direction()) > radius_)
         return false;
 
-    HCollision ci;
+    QVector3D closestCollision;
+    ICollider *closestCollider;
     bool anyCollisions = false;
 
     for (int i = 0; i < colliders_.length(); i++)
     {
-        HCollision currentCi;
-        if (colliders_.at(i)->detectCollision(ray, currentCi))
+        QVector3D currentCollision;
+        ICollider *currentCollider;
+        if (colliders_.at(i)->detectCollision(ray, currentCollision, &currentCollider))
         {
-            if (!anyCollisions)
+            if (anyCollisions)
             {
-                ci = currentCi;
-                anyCollisions = true;
+                if (currentCollision.distanceToPoint(ray.origin()) < closestCollision.distanceToPoint(ray.origin()))
+                {
+                    closestCollision = currentCollision;
+                    closestCollider = currentCollider;
+                }
             }
             else
             {
-                if (currentCi.point().distanceToPoint(ray.origin()) < ci.point().distanceToPoint(ray.origin()))
-                    ci = currentCi;
+                closestCollision = currentCollision;
+                closestCollider = currentCollider;
+                anyCollisions = true;
             }
         }
     }
 
     if (anyCollisions)
     {
-        collisionInfo = ci;
+        collisionPoint = closestCollision;
+        *collider = closestCollider;
         return true;
     }
 
     return false;
+}
+
+bool HBoundingSphereCollider::processCollision(const HRay &ray, const HTracer3 &tracer, QColor &resultColor) const
+{
+    ICollider *collider;
+    bool isCollisonExists = ICollider::detectCollision(ray, &collider);
+    if (!isCollisonExists)
+        return false;
+
+    return collider->processCollision(ray, tracer, resultColor);
 }
 
 HSphere HBoundingSphereCollider::getBoundingSphere() const

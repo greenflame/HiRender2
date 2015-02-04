@@ -10,6 +10,8 @@
 #include "hcollision.h"
 #include "hmaterial.h"
 #include "haccuracy.h"
+#include "ishader.h"
+#include "htracer3.h"
 
 class HPolygonCollider : public ICollider
 {
@@ -17,11 +19,13 @@ public:
     // Constructors
     HPolygonCollider();
 
-    HPolygonCollider(QVector3D v1, QVector3D v2, QVector3D v3, HMaterial *material);
+    HPolygonCollider(QVector3D v1, QVector3D v2, QVector3D v3, IShader *shader);
     HPolygonCollider(const HPolygonCollider &collider);
 
     // ICollider interface
-    bool detectCollision(const HRay &ray, HCollision &collisionInfo) const;
+    bool detectCollision(const HRay &ray, QVector3D &collisionPoint, ICollider **collider) const;
+    bool processCollision(const HRay &ray, const HTracer3 &tracer, QColor &resultColor) const;
+
     HSphere getBoundingSphere() const;
     void transform(const QMatrix4x4 &m);
     ICollider *clone() const;
@@ -54,8 +58,8 @@ public:
     QVector3D t3() const;
     void setT3(const QVector3D &t3);
 
-    HMaterial *material() const;
-    void setMaterial(HMaterial *material);
+    IShader *shader() const;
+    void setShader(IShader *shader);
 
     QImage *texture() const;
     void setTexture(QImage *value);
@@ -70,7 +74,7 @@ private:
     QVector3D v1_, v2_, v3_;
     QVector3D n1_, n2_, n3_;
     QVector3D t1_, t2_, t3_;
-    HMaterial *material_;
+    IShader *shader_;
     QImage *texture_;
 
     bool useNormals_;

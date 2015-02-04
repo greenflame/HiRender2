@@ -7,13 +7,13 @@ HTracer3::HTracer3(QObject *parent) : QObject(parent)
     setTileSize(QSize(128, 128));
     setBackgroundColor(Qt::black);
 
-    addMaterial("default", Qt::gray);
+    addPhongShader("default", Qt::gray);
 }
 
 HTracer3::~HTracer3()
 {
     deleteColliders();
-    deleteMaterials();
+    deleteShaders();
 }
 
 QImage HTracer3::render()
@@ -51,23 +51,21 @@ QImage HTracer3::render()
     return resultImage;
 }
 
-void HTracer3::addPolygon(const QVector3D &v1, const QVector3D &v2, const QVector3D &v3, const QString &materialName)
+void HTracer3::addPolygon(const QVector3D &v1, const QVector3D &v2, const QVector3D &v3, const QString &shaderName)
 {
-    QString resultMaterialName = materialName;
-    if (!materials_.contains(materialName))
+    QString resultMaterialName = shaderName;
+    if (!shaders_.contains(shaderName))
         resultMaterialName = "default";
 
-    colliders_.append(new HPolygonCollider(v1, v2, v3, materials_[resultMaterialName]));
+    colliders_.append(new HPolygonCollider(v1, v2, v3, shaders_[resultMaterialName]));
 }
 
 void HTracer3::addPolygon(const QVector3D &v1, const QVector3D &v2, const QVector3D &v3,
-                          const QVector3D &n1, const QVector3D &n2, const QVector3D &n3, const QString &materialName)
+                          const QVector3D &n1, const QVector3D &n2, const QVector3D &n3, const QString &shaderName)
 {
-    QString resultMaterialName = materialName;
-    if (!materials_.contains(materialName))
-        resultMaterialName = "default";
+    QString resultShaderName = shaders_.contains(shaderName) ? shaderName : "default";
 
-    HPolygonCollider *collider = new HPolygonCollider(v1, v2, v3, materials_[resultMaterialName]);
+    HPolygonCollider *collider = new HPolygonCollider(v1, v2, v3, shaders_[resultShaderName]);
     collider->setN1(n1);
     collider->setN2(n2);
     collider->setN3(n3);
@@ -76,18 +74,16 @@ void HTracer3::addPolygon(const QVector3D &v1, const QVector3D &v2, const QVecto
     colliders_.append(collider);
 }
 
-void HTracer3::addSphere(const QVector3D &center, float radius, const QString &materialName)
+void HTracer3::addSphere(const QVector3D &center, float radius, const QString &shaderName)
 {
-    QString resultMaterialName = materialName;
-    if (!materials_.contains(materialName))
-        resultMaterialName = "default";
+    QString resultShaderName = shaders_.contains(shaderName) ? shaderName : "default";
 
-    colliders_.append(new HSphereCollider(center, radius, materials_[resultMaterialName]));
+    colliders_.append(new HSphereCollider(center, radius, shaders_[resultShaderName]));
 }
 
-void HTracer3::addMaterial(const QString &name, const QColor &diffuseColor)
+void HTracer3::addPhongShader(const QString &name, const QColor &diffuseColor)
 {
-    materials_.insert(name, new HMaterial(diffuseColor));
+    shaders_.insert(name, new HPhongShader(diffuseColor));
 }
 
 void HTracer3::addPointLight(const QVector3D &position)
@@ -273,14 +269,14 @@ void HTracer3::deleteBoundingTree()
     delete boundingTreeHead_;
 }
 
-void HTracer3::deleteMaterials()
+void HTracer3::deleteShaders()
 {
-    QList<HMaterial *> pointers = materials_.values();
+    QList<IShader *> pointers = shaders_.values();
 
     for (int i = 0; i < pointers.length(); i++)
         delete pointers.at(i);
 
-    materials_.clear();
+    shaders_.clear();
 }
 
 void HTracer3::deleteTextures()
@@ -291,19 +287,6 @@ void HTracer3::deleteTextures()
         delete pointers.at(i);
 
     textures_.clear();
-}
-
-float HTracer3::lambertLightScheme(const HCollision &ci) const
-{
-    float maxLightness = 0;
-
-    for (int i = 0; i < pointLights_.length(); i++)
-    {
-        float currentLightness = qMax((float)0, QVector3D::dotProduct(ci.normal().normalized(), (pointLights_.at(i) - ci.point()).normalized()));
-        maxLightness = qMax(maxLightness, currentLightness);
-    }
-
-    return maxLightness;
 }
 
 float HTracer3::ambientOcclusionLightScheme(const HCollision &ci, int samples) const
@@ -319,33 +302,13 @@ float HTracer3::ambientOcclusionLightScheme(const HCollision &ci, int samples) c
         if (QVector3D::dotProduct(direction, ci.normal()) < 0)
             direction = -direction;
 
-        HCollision tmpCi;
-        if (computeCollision(HRay(ci.point(), direction), tmpCi))
+        QVector3D tmpPoint;
+        ICollider *tmpCollider;
+        if (boundingTreeHead_->detectCollision(HRay(ci.point(), direction), tmpPoint, &tmpCollider))
             intersectedRays++;
     }
 
     return 1 - (float)intersectedRays / samples;
-}
-
-float HTracer3::shadowLightScheme(const HCollision &ci) const
-{
-    for (int i = 0; i < pointLights_.length(); i++)
-    {
-        HCollision shadowRayCi;
-        if (computeCollision(HRay(ci.point(), pointLights_[i] - ci.point()), shadowRayCi))
-        {
-            if ((ci.point() - shadowRayCi.point()).length() > (ci.point() - pointLights_[i]).length())
-            {
-                return 1;
-            }
-        }
-        else
-        {
-            return 1;
-        }
-    }
-
-    return 0;
 }
 
 QColor HTracer3::skyMap(const QString &textureName, const HRay &ray) const
@@ -379,25 +342,20 @@ void HTracer3::renderRect(QImage &image, const QRect &rect) const
 void HTracer3::renderPixel(QImage &image, const QPoint &pixel) const
 {
     HRay ray = computeRayForPixel(pixel);
-    HCollision ci;
-    QColor resultColor = Qt::black;
-
-    if (computeCollision(ray, ci))
-    {
-        float lightness;
-        float lsl = qMin(lambertLightScheme(ci), shadowLightScheme(ci));
-//        float ao = ambientOcclusionLightScheme(ci, 25);
-//        lightness = ao * 0.6 + lsl * 0.4;
-        lightness = lsl;
-//        lightness = ao;
-        resultColor = mixColors(ci.material()->diffuseColor(), Qt::black, lightness, 1 - lightness);
-    }
-    else
-    {
-        resultColor = skyMap("sky", ray);
-    }
-
+    QColor resultColor = traceRay(ray);
     image.setPixel(pixel, resultColor.rgba());
+}
+
+QColor HTracer3::traceRay(const HRay &ray) const
+{
+    QColor resultColor;
+
+    bool isCollisionExist = boundingTreeHead_->processCollision(ray, *this, resultColor);
+
+    if (!isCollisionExist)
+        resultColor = backgroundColor();
+
+    return resultColor;
 }
 
 HRay HTracer3::computeRayForPixel(const QPoint &point) const
@@ -408,11 +366,6 @@ HRay HTracer3::computeRayForPixel(const QPoint &point) const
                           cameraFrustum_.bottom() + (cameraFrustum_.top() - cameraFrustum_.bottom())
                             / imageSize_.height() * (imageSize_.height() - point.y() - 1),
                           -cameraFrustum_.nearPlane()));
-}
-
-bool HTracer3::computeCollision(const HRay &ray, HCollision &collisionInfo) const
-{
-    return boundingTreeHead_->detectCollision(ray, collisionInfo);
 }
 
 QColor HTracer3::mixColors(const QColor &c1, const QColor &c2, float k1, float k2)

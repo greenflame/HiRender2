@@ -14,7 +14,9 @@ public:
     ~HBoundingSphereCollider();
 
     // ICollider interface
-    bool detectCollision(const HRay &ray, HCollision &collisionInfo) const;
+    bool detectCollision(const HRay &ray, QVector3D &collisionPoint, ICollider **collider) const;
+    bool processCollision(const HRay &ray, const HTracer3 &tracer, QColor &resultColor) const;
+
     HSphere getBoundingSphere() const;
     void transform(const QMatrix4x4 &m);
     ICollider *clone() const;
