@@ -8,6 +8,8 @@ HTracer3::HTracer3(QObject *parent) : QObject(parent)
     setBackgroundColor(Qt::black);
 
     addPhongShader("default", Qt::gray);
+
+    shaders_.insert("mirrorShader", new HMirrorShader(3, 10));
 }
 
 HTracer3::~HTracer3()
@@ -311,25 +313,6 @@ float HTracer3::ambientOcclusionLightScheme(const HCollision &ci, int samples) c
     return 1 - (float)intersectedRays / samples;
 }
 
-QColor HTracer3::skyMap(const QString &textureName, const HRay &ray) const
-{
-    QImage &texture = *textures_[textureName];
-
-    float yAngle = acosf(QVector3D::dotProduct(QVector3D(0, 1, 0), ray.direction()));
-    QVector3D xzProjection = QVector3D(ray.direction().x(), 0, ray.direction().z()).normalized();
-    float zAngle = acosf(QVector3D::dotProduct(QVector3D(0, 0, 1), xzProjection));
-    float xAngle = acosf(QVector3D::dotProduct(QVector3D(1, 0, 0), xzProjection));
-
-    if (xAngle < M_PI / 2)
-        zAngle = 2 * M_PI - zAngle;
-
-    QPoint textureCoordinate;
-    textureCoordinate.setX(texture.width() * zAngle / (M_PI * 2));
-    textureCoordinate.setY(texture.height() * yAngle / M_PI);
-
-    return texture.pixel(textureCoordinate);
-}
-
 void HTracer3::renderRect(QImage &image, const QRect &rect) const
 {
     for (int y = rect.top(); y < rect.top() + rect.height(); y++)
@@ -353,7 +336,19 @@ QColor HTracer3::traceRay(const HRay &ray) const
     bool isCollisionExist = boundingTreeHead_->processCollision(ray, *this, resultColor);
 
     if (!isCollisionExist)
-        resultColor = backgroundColor();
+    {
+        if (textures_.contains("skyTexture"))
+        {
+            resultColor = HSkyShader("skyTexture").process(HCollision(QVector3D(0, 0, 0),
+                                                                    QVector3D(0, 0, 0),
+                                                                    -ray.direction()),
+                                                          *this);
+        }
+        else
+        {
+            resultColor = backgroundColor();
+        }
+    }
 
     return resultColor;
 }

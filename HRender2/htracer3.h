@@ -16,6 +16,9 @@
 
 #include "ishader.h"
 #include "hphongshader.h"
+#include "hskyshader.h"
+#include "hmirrorshader.h"
+
 #include "icollider.h"
 #include "hfrustum.h"
 #include "hboundingspherecollider.h"
@@ -71,6 +74,8 @@ signals:
 
 private:
     friend class HPhongShader;
+    friend class HSkyShader;
+    friend class HMirrorShader;
 
     // Camera settings
     HFrustum cameraFrustum_;
@@ -112,9 +117,6 @@ private:
     // Light schemes
     float ambientOcclusionLightScheme(const HCollision &ci, int samples) const;
 
-    // Shaders
-    QColor skyMap(const QString &textureName, const HRay &ray) const;
-
     // STH... render
     void renderRect(QImage &image, const QRect &rect) const;
     void renderPixel(QImage &image, const QPoint &pixel) const;
@@ -125,6 +127,7 @@ private:
     // STH.. static
     static QColor mixColors(const QColor &c1, const QColor &c2, float k1, float k2);
     static float distance(const QPoint &p1, const QPoint &p2);
+
 
 };
 

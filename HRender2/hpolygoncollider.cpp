@@ -240,13 +240,13 @@ QVector3D HPolygonCollider::computeNormal(const HRay &ray, const QVector3D &coll
     if (useNormals_)
     {
         // Phong interpolation
-        QVector3D h1 = projectPointOnLine(v2_, v3_, v1_);
-        QVector3D h2 = projectPointOnLine(v1_, v3_, v2_);
-        QVector3D h3 = projectPointOnLine(v2_, v1_, v3_);
+        QVector3D h1 = HLibrary::projectPointOnLine(v2_, v3_, v1_);
+        QVector3D h2 = HLibrary::projectPointOnLine(v1_, v3_, v2_);
+        QVector3D h3 = HLibrary::projectPointOnLine(v2_, v1_, v3_);
 
-        QVector3D hh1 = projectPointOnLine(v1_, h1, collisionPoint);
-        QVector3D hh2 = projectPointOnLine(v2_, h2, collisionPoint);
-        QVector3D hh3 = projectPointOnLine(v3_, h3, collisionPoint);
+        QVector3D hh1 = HLibrary::projectPointOnLine(v1_, h1, collisionPoint);
+        QVector3D hh2 = HLibrary::projectPointOnLine(v2_, h2, collisionPoint);
+        QVector3D hh3 = HLibrary::projectPointOnLine(v3_, h3, collisionPoint);
 
         float k1 = 1 - (v1_ - hh1).length() / (v1_ - h1).length();
         float k2 = 1 - (v2_ - hh2).length() / (v2_ - h2).length();
@@ -265,14 +265,3 @@ QVector3D HPolygonCollider::computeNormal(const HRay &ray, const QVector3D &coll
 
     return normal.normalized();
 }
-
-QVector3D HPolygonCollider::projectPointOnLine(QVector3D l1, QVector3D l2, QVector3D p)
-{
-    QVector3D lineDirection = l2 - l1;
-    QVector3D v = p - l1;
-    return l1 + QVector3D::dotProduct(v, lineDirection)
-            / QVector3D::dotProduct(lineDirection, lineDirection) * lineDirection;
-}
-
-
-

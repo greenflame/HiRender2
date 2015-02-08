@@ -26,7 +26,10 @@ SOURCES += main.cpp\
     hcollision.cpp \
     hsphere.cpp \
     ishader.cpp \
-    hphongshader.cpp
+    hphongshader.cpp \
+    hskyshader.cpp \
+    hmirrorshader.cpp \
+    hlibrary.cpp
 
 HEADERS  += mainwindow.h \
     hmaterial.h \
@@ -41,6 +44,9 @@ HEADERS  += mainwindow.h \
     hcollision.h \
     hsphere.h \
     ishader.h \
-    hphongshader.h
+    hphongshader.h \
+    hskyshader.h \
+    hmirrorshader.h \
+    hlibrary.h
 
 FORMS    += mainwindow.ui

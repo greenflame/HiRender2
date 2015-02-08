@@ -102,8 +102,8 @@ bool HSphereCollider::localDetectCollision(const HRay &ray, HCollision &collisio
     if (center().distanceToLine(ray.origin(), ray.direction()) > radius())    //no intersections
         return false;
 
-    if (HAccuracy::floatEqual(center().distanceToPoint(ray.origin()), radius()) &&
-            QVector3D::dotProduct(ray.origin() - center(), ray.direction()) > 0)    //ray origin on the sphere and directed outside
+    if (HAccuracy::floatEqual(center().distanceToPoint(ray.origin()), radius()) /*&&
+            QVector3D::dotProduct(ray.origin() - center(), ray.direction()) > 0*/)    //ray origin on the sphere and directed outside
         return false;
 
     QVector3D v = center() - ray.origin();
@@ -119,32 +119,32 @@ bool HSphereCollider::localDetectCollision(const HRay &ray, HCollision &collisio
 
     QVector3D point, normal;
 
-    if (center().distanceToPoint(ray.origin()) < radius())    //ray origin inside sphere
-    {
-        if (QVector3D::dotProduct(ray.direction(), r1 - ray.origin()) > 0)
-        {
-            point = r1;
-            normal = center() - r1;
-        }
-        else
-        {
-            point = r2;
-            normal = center() - r2;
-        }
-    }
-    else    //ray origin outside sphere
+//    if (center().distanceToPoint(ray.origin()) < radius())    //ray origin inside sphere
+//    {
+//        if (QVector3D::dotProduct(ray.direction(), r1 - ray.origin()) > 0)
+//        {
+//            point = r1;
+//            normal = center() - r1;
+//        }
+//        else
+//        {
+//            point = r2;
+//            normal = center() - r2;
+//        }
+//    }
+//    else    //ray origin outside sphere
     {
         QVector3D c = (r1 - ray.origin()).length() < (r2 - ray.origin()).length() ? r1 : r2;
 
-        if (QVector3D::dotProduct(ray.direction(), c - ray.origin()) > 0)
+//        if (QVector3D::dotProduct(ray.direction(), c - ray.origin()) > 0)
         {
             point = c;
             normal = c - center();
         }
-        else
-        {
-            return false;
-        }
+//        else
+//        {
+//            return false;
+//        }
     }
 
     collisionInfo = HCollision(point, normal, -ray.direction());

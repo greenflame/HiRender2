@@ -12,6 +12,7 @@
 #include "haccuracy.h"
 #include "ishader.h"
 #include "htracer3.h"
+#include "hlibrary.h"
 
 class HPolygonCollider : public ICollider
 {
@@ -82,8 +83,6 @@ private:
 
     bool computeCollisionPoint(const HRay &ray, QVector3D &collisionPoint) const;
     QVector3D computeNormal(const HRay &ray, const QVector3D &collisionPoint) const;
-
-    static QVector3D projectPointOnLine(QVector3D l1, QVector3D l2, QVector3D p);
 };
 
 #endif // HPOLYGONCOLLIDER_H

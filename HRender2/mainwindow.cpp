@@ -16,7 +16,7 @@ MainWindow::~MainWindow()
 
 void MainWindow::on_pushButton_clicked()
 {
-    objPath = "/Users/Alexander/Desktop/planet.obj";
+    objPath = "/Users/Alexander/Desktop/head.obj";
     resultPath = "/Users/Alexander/Desktop/sphere.png";
 
 //    objPath = "planet.obj";
@@ -24,20 +24,20 @@ void MainWindow::on_pushButton_clicked()
 
     HTracer3 tracer3;
 
-    tracer3.addTexture("sky", QImage("/Users/Alexander/Desktop/pano1.jpg"));
+    tracer3.addTexture("skyTexture", QImage("/Users/Alexander/Desktop/pano1.jpg"));
 
-    int lines = 720;
+    int lines = 720 * 2;
     float k = 16.0 / 9.0;
 
     tracer3.setImageSize(QSize(lines * k, lines));
-    tracer3.setCameraFrustum(HFrustum(-0.5 * k, 0.5 * k, -0.5, 0.5, 4, 100));
+    tracer3.setCameraFrustum(HFrustum(-0.5 * k, 0.5 * k, -0.5, 0.5, 0.5, 100));
 
 //    loadObj(tracer3, objPath);
-    tracer3.addSphere(QVector3D(0, 0, 0), 1);
+    tracer3.addSphere(QVector3D(0, 0, 0), 1, "mirrorShader");
 
     QMatrix4x4 m;
 //    m.translate(-0.35, 0.5, -20);
-    m.translate(0, 0, -10);
+    m.translate(0, 0, -2);
 //    m.rotate(30, QVector3D(0, 1, 0));
     tracer3.transformScene(m);
         tracer3.addPointLight(QVector3D(2, -1, 5));
@@ -50,6 +50,7 @@ void MainWindow::on_pushButton_clicked()
     ui->label_2->clear();
     t.start();
     QImage result = tracer3.render();
+    result = result.scaled(result.width() / 2, result.height() / 2, Qt::IgnoreAspectRatio, Qt::SmoothTransformation);
     ui->label->setPixmap(QPixmap::fromImage(result));
     result.save(resultPath);
 }
@@ -86,6 +87,7 @@ bool MainWindow::loadObj(HTracer3 &tracer, const QString &fileName)
     QVector<QVector3D> normals;
 
     QString currentMaterialName = "default";
+//    QString currentMaterialName = "mirrorShader";
 
     while (!in.atEnd())
     {
