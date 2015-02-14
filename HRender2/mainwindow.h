@@ -10,6 +10,7 @@
 #include <QTimer>
 #include <QColor>
 #include <QFileInfo>
+#include <QFileDialog>
 #include <QDir>
 
 #include "htracer3.h"
@@ -40,8 +41,6 @@ private:
     bool loadMtl(HTracer3 &tracer, const QString &fileName);
 
     QTime t;
-    QString objPath;
-    QString resultPath;
 };
 
 #endif // MAINWINDOW_H

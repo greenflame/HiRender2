@@ -8,8 +8,6 @@ HTracer3::HTracer3(QObject *parent) : QObject(parent)
     setBackgroundColor(Qt::black);
 
     addPhongShader("default", Qt::gray);
-
-    shaders_.insert("mirrorShader", new HMirrorShader(3, 10));
 }
 
 HTracer3::~HTracer3()

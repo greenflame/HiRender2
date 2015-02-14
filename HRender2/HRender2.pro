@@ -14,7 +14,6 @@ TEMPLATE = app
 
 SOURCES += main.cpp\
         mainwindow.cpp \
-    hmaterial.cpp \
     haccuracy.cpp \
     hfrustum.cpp \
     hray.cpp \
@@ -29,10 +28,11 @@ SOURCES += main.cpp\
     hphongshader.cpp \
     hskyshader.cpp \
     hmirrorshader.cpp \
-    hlibrary.cpp
+    sscene.cpp \
+    spolygon.cpp \
+    smaterial.cpp
 
 HEADERS  += mainwindow.h \
-    hmaterial.h \
     haccuracy.h \
     hfrustum.h \
     hray.h \
@@ -47,6 +47,8 @@ HEADERS  += mainwindow.h \
     hphongshader.h \
     hskyshader.h \
     hmirrorshader.h \
-    hlibrary.h
+    sscene.h \
+    spolygon.h \
+    smaterial.h
 
 FORMS    += mainwindow.ui

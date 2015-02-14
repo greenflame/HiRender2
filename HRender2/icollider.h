@@ -6,7 +6,6 @@
 
 #include "hcollision.h"
 #include "hray.h"
-#include "hmaterial.h"
 #include "hsphere.h"
 #include "ishader.h"
 

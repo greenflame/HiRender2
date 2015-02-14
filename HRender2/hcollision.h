@@ -3,8 +3,6 @@
 
 #include <QVector3D>
 
-#include "hmaterial.h"
-
 class HCollision
 {
 public:

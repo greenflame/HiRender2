@@ -6,7 +6,6 @@ MainWindow::MainWindow(QWidget *parent) :
     ui(new Ui::MainWindow)
 {
     ui->setupUi(this);
-    //    on_pushButton_clicked();
 }
 
 MainWindow::~MainWindow()
@@ -16,33 +15,24 @@ MainWindow::~MainWindow()
 
 void MainWindow::on_pushButton_clicked()
 {
-    objPath = "/Users/Alexander/Desktop/head.obj";
-    resultPath = "/Users/Alexander/Desktop/sphere.png";
-
-//    objPath = "planet.obj";
-//    resultPath = "planet.png";
+    QString fileName = QFileDialog::getOpenFileName(this);
 
     HTracer3 tracer3;
 
-    tracer3.addTexture("skyTexture", QImage("/Users/Alexander/Desktop/pano1.jpg"));
-
-    int lines = 720 * 2;
+    int lines = 720;
     float k = 16.0 / 9.0;
 
     tracer3.setImageSize(QSize(lines * k, lines));
-    tracer3.setCameraFrustum(HFrustum(-0.5 * k, 0.5 * k, -0.5, 0.5, 0.5, 100));
+    tracer3.setCameraFrustum(HFrustum(-0.5 * k, 0.5 * k, -0.5, 0.5, 1, 100));
 
-//    loadObj(tracer3, objPath);
-    tracer3.addSphere(QVector3D(0, 0, 0), 1, "mirrorShader");
+    loadObj(tracer3, fileName);
 
     QMatrix4x4 m;
-//    m.translate(-0.35, 0.5, -20);
-    m.translate(0, 0, -2);
-//    m.rotate(30, QVector3D(0, 1, 0));
+    m.translate(0, 0, -20);
+    m.rotate(30, 1, 0, 0);
+    m.rotate(30, 0, 1, 0);
     tracer3.transformScene(m);
-        tracer3.addPointLight(QVector3D(2, -1, 5));
-//        tracer3.addPointLight(QVector3D(0, 0, 0));
-//    tracer3.setTileSize(QSize(25, 25));
+    tracer3.addPointLight(QVector3D(2, -1, 5));
 
     connect(&tracer3, SIGNAL(onRenderMessage(QString)), this, SLOT(onRenderMessage(QString)));
     connect(&tracer3, SIGNAL(onTemporaryImageUpdated(QImage)), this, SLOT(onTemporaryImageUpdated(QImage)));
@@ -50,9 +40,9 @@ void MainWindow::on_pushButton_clicked()
     ui->label_2->clear();
     t.start();
     QImage result = tracer3.render();
-    result = result.scaled(result.width() / 2, result.height() / 2, Qt::IgnoreAspectRatio, Qt::SmoothTransformation);
+//    result = result.scaled(result.width() / 2, result.height() / 2, Qt::IgnoreAspectRatio, Qt::SmoothTransformation);
     ui->label->setPixmap(QPixmap::fromImage(result));
-    result.save(resultPath);
+//    result.save(resultPath);
 }
 
 void MainWindow::onTemporaryImageUpdated(QImage image)
@@ -61,7 +51,7 @@ void MainWindow::onTemporaryImageUpdated(QImage image)
 
     if (t.elapsed() > 10000)
     {
-        image.save(resultPath);
+        //        image.save(resultPath);
         t.start();
     }
     QCoreApplication::processEvents(QEventLoop::AllEvents, 100);
@@ -87,7 +77,6 @@ bool MainWindow::loadObj(HTracer3 &tracer, const QString &fileName)
     QVector<QVector3D> normals;
 
     QString currentMaterialName = "default";
-//    QString currentMaterialName = "mirrorShader";
 
     while (!in.atEnd())
     {
