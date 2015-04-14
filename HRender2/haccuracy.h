@@ -5,6 +5,13 @@
 
 #define EPSILON 0.00001
 
+/*
+ * Class provides compatation of floating point numbers.
+ * Standart libraries.
+ *
+ * !Unstable work.
+ */
+
 class HAccuracy
 {
 public:

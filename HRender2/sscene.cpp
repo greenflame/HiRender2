@@ -48,7 +48,7 @@ bool SScene::loadObj(const QString &fileName)
             if (!mtlLoadSucces)
             {
                 qDebug() << "Cann't load material library.";
-                return false;
+//                return false;
             }
         }
 

@@ -71,7 +71,7 @@ void MainWindow::on_pushButton_test_clicked()
     HTracer3 tracer3;
 
     // Frustum
-    tracer3.setCameraFrustum(HFrustum(-1, 1, -0.5, 0.5, 4, 1000));
+    tracer3.setCameraFrustum(HFrustum(-1, 1, -0.5, 0.5, 2, 1000));
 
     // Geometry
     SScene s;
@@ -84,7 +84,7 @@ void MainWindow::on_pushButton_test_clicked()
     m.translate(0, 0, -10);
     m.rotate(30, 1, 0, 0);
     m.rotate(30, 0, 1, 0);
-    tracer3.addPointLight(QVector3D(0, 0, 10));
+    tracer3.addPointLight(QVector3D(5, 5, 10));
     tracer3.setCameraMatrix(m);
 
     connect(&tracer3, SIGNAL(onRenderMessage(QString)), this, SLOT(onRenderMessage(QString)));
