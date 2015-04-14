@@ -2,6 +2,8 @@
 
 HTracer3::HTracer3(QObject *parent) : QObject(parent)
 {
+    boundingTreeHead_ = 0;
+
     setCameraFrustum(HFrustum(-0.9, 0.9, -0.5, 0.5, 1, 1000));
     setImageSize(QSize(1280, 720));
     setTileSize(QSize(128, 128));
@@ -14,6 +16,7 @@ HTracer3::~HTracer3()
 {
     deleteColliders();
     deleteShaders();
+    deleteBoundingTree();
 }
 
 QImage HTracer3::render()
@@ -28,10 +31,17 @@ QImage HTracer3::render()
 
     initializeTileMap();
 
-    emit onRenderMessage("Building boudary tree...");
-    timer.start();
-    buildBoundingTree();
-    emit onRenderMessage(tr("Ok. Time: %0.").arg(timer.elapsed()));
+    if (boundingTreeHead_ == 0)
+    {
+        emit onRenderMessage("Building boudary tree...");
+        timer.start();
+        buildBoundingTree();
+        emit onRenderMessage(tr("Ok. Time: %0.").arg(timer.elapsed()));
+    }
+    else
+    {
+        emit onRenderMessage("Boundary tree already builded.");
+    }
 
     emit onRenderMessage("Tracing...");
     int renderingTime = 0;
@@ -46,7 +56,6 @@ QImage HTracer3::render()
     emit onRenderMessage(tr("Ok. Time: %0.").arg(renderingTime));
 
     deleteTileMap();
-    deleteBoundingTree();
 
     return resultImage;
 }
@@ -116,6 +125,16 @@ HFrustum HTracer3::cameraFrustum() const
 void HTracer3::setCameraFrustum(const HFrustum &cameraFrustum)
 {
     cameraFrustum_ = cameraFrustum;
+}
+
+QMatrix4x4 HTracer3::cameraMatrix() const
+{
+    return cameraMatrix_;
+}
+
+void HTracer3::setCameraMatrix(const QMatrix4x4 &cameraMatrix)
+{
+    cameraMatrix_ = cameraMatrix;
 }
 
 QSize HTracer3::imageSize() const
@@ -221,6 +240,8 @@ void HTracer3::deleteColliders()
 
 void HTracer3::buildBoundingTree()
 {
+    deleteBoundingTree();
+
     QVector<ICollider *> clones;
 
     for (int i = 0; i < colliders_.length(); i++)
@@ -266,7 +287,11 @@ void HTracer3::buildBoundingTree()
 
 void HTracer3::deleteBoundingTree()
 {
-    delete boundingTreeHead_;
+    if (boundingTreeHead_ != 0)
+    {
+        delete boundingTreeHead_;
+        boundingTreeHead_ = 0;
+    }
 }
 
 void HTracer3::deleteShaders()
@@ -358,7 +383,7 @@ HRay HTracer3::computeRayForPixel(const QPoint &point) const
                             / imageSize_.width() * point.x(),
                           cameraFrustum_.bottom() + (cameraFrustum_.top() - cameraFrustum_.bottom())
                             / imageSize_.height() * (imageSize_.height() - point.y() - 1),
-                          -cameraFrustum_.nearPlane()));
+                          -cameraFrustum_.nearPlane())).transformed(cameraMatrix_);
 }
 
 QColor HTracer3::mixColors(const QColor &c1, const QColor &c2, float k1, float k2)

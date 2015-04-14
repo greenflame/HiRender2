@@ -17,6 +17,24 @@ HRay::~HRay()
 
 }
 
+void HRay::transform(const QMatrix4x4 &m)
+{
+    QMatrix4x4 mt = m.inverted();
+
+    QVector4D originTmp(origin_, 1);
+    setOrigin(QVector3D(mt * originTmp));
+
+    QVector4D directionTmp(direction_, 0);
+    setDirection(QVector3D(mt * directionTmp));
+}
+
+HRay HRay::transformed(const QMatrix4x4 &m)
+{
+    HRay tmp = *this;
+    tmp.transform(m);
+    return tmp;
+}
+
 QVector3D HRay::origin() const
 {
     return origin_;

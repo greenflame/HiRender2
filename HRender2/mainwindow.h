@@ -2,6 +2,7 @@
 #define MAINWINDOW_H
 
 #include <QMainWindow>
+#include <QMouseEvent>
 
 #include <QMatrix4x4>
 #include <QImage>
@@ -12,9 +13,12 @@
 #include <QFileInfo>
 #include <QFileDialog>
 #include <QDir>
+#include <QTimer>
 
 #include "htracer3.h"
 #include "hspherecollider.h"
+
+#include "sscene.h"
 
 namespace Ui {
 class MainWindow;
@@ -29,10 +33,18 @@ public:
     ~MainWindow();
 
 public slots:
-    void on_pushButton_clicked();
+    void on_pushButton_loadScene_clicked();
+    void on_pushButton_render_clicked();
+
+    void on_pushButton_test_clicked();
 
     void onTemporaryImageUpdated(QImage image);
     void onRenderMessage(QString message);
+
+    void previewUpdate();
+
+    void mousePressEvent(QMouseEvent *event);
+    void mouseMoveEvent(QMouseEvent *event);
 
 private:
     Ui::MainWindow *ui;
@@ -40,7 +52,15 @@ private:
     bool loadObj(HTracer3 &tracer, const QString &fileName);
     bool loadMtl(HTracer3 &tracer, const QString &fileName);
 
-    QTime t;
+    HTracer3 tracer;
+    bool isSceneLoaded;
+    int xRot, yRot;
+    int xPrev, yPrev;
+    bool isPreviewRendered;
+
+    QSize resultSize;
+    float previewScale;
+    float distanceFromCenter;
 };
 
 #endif // MAINWINDOW_H

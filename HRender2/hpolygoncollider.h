@@ -26,7 +26,7 @@ public:
     bool processCollision(const HRay &ray, const HTracer3 &tracer, QColor &resultColor) const;
 
     HSphere getBoundingSphere() const;
-    void transform(const QMatrix4x4 &m);    //!!!normal transform
+    void transform(const QMatrix4x4 &m);
     ICollider *clone() const;
 
     // Accesors

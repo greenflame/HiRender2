@@ -50,7 +50,7 @@ public:
     void addPointLight(const QVector3D &position);
 
     //Textures
-    void addTexture(const QString &name, const QImage &image);
+    void addTexture(const QString &name, const QImage &image);  ///not used?
 
     // Scene
     void transformScene(const QMatrix4x4 &matrix);
@@ -58,6 +58,9 @@ public:
     // Accesors
     HFrustum cameraFrustum() const;
     void setCameraFrustum(const HFrustum &cameraFrustum);
+
+    QMatrix4x4 cameraMatrix() const;
+    void setCameraMatrix(const QMatrix4x4 &cameraMatrix);
 
     QSize imageSize() const;
     void setImageSize(const QSize &imageSize);
@@ -79,6 +82,7 @@ private:
 
     // Camera settings
     HFrustum cameraFrustum_;
+    QMatrix4x4 cameraMatrix_;
 
     // Image settings
     QSize imageSize_;
@@ -115,7 +119,7 @@ private:
     void deleteTextures();
 
     // Light schemes
-    float ambientOcclusionLightScheme(const HCollision &ci, int samples) const;
+    float ambientOcclusionLightScheme(const HCollision &ci, int samples) const; ///???????whf???
 
     // STH... render
     void renderRect(QImage &image, const QRect &rect) const;

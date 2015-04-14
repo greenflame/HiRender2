@@ -64,13 +64,12 @@ void HPolygonCollider::transform(const QMatrix4x4 &m)
     setV2(m * v2());
     setV3(m * v3());
 
-//    QMatrix4x4 im = m.inverted().;
-
-//    im.setColumn(3, QVector4D(0, 0, 0, 1));
-
-//    setN1(im * n1());
-//    setN2(im * n2());
-//    setN3(im * n3());
+    QVector4D nn1(n1_, 0);
+    setN1(QVector3D(m * nn1));
+    QVector4D nn2(n2_, 0);
+    setN2(QVector3D(m * nn2));
+    QVector4D nn3(n3_, 0);
+    setN3(QVector3D(m * nn3));
 }
 
 QVector3D HPolygonCollider::v1() const

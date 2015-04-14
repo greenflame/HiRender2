@@ -1,13 +1,18 @@
 #ifndef SSCENE_H
 #define SSCENE_H
 
+#include <QDebug>
+
+#include <QFileInfo>
 #include <QVector>
 #include <QVector3D>
 #include <QMap>
 #include <QString>
+#include <QFile>
 
 #include <spolygon.h>
 #include <smaterial.h>
+#include <htracer3.h>
 
 class SScene
 {
@@ -19,10 +24,13 @@ public:
     QMap<QString, SMaterial> materials;
     QVector<QVector3D> lights;
 
-    void loadObj(const QString &fileName);
+    void clear();
+    bool loadObj(const QString &fileName);
+
+    void copyToTracer(HTracer3 &tracer);
 
 private:
-    void loadMtl(const QString &filename);
+    bool loadMtl(const QString &fileName);
 
 };
 

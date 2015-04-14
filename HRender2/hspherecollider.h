@@ -25,7 +25,7 @@ public:
 
     HSphere getBoundingSphere() const;
     ICollider *clone() const;
-    void transform(const QMatrix4x4 &m);    //!!!scale todo
+    void transform(const QMatrix4x4 &m);
 
     // Accesors
     QVector3D center() const;

@@ -127,7 +127,7 @@ void HBoundingSphereCollider::computeBoundingSphere()
                 return;
             }
         }
-        else    //spheres are not first insede second
+        else    // Spheres are not first insede second
         {
             float radius = (s1.radius() + s2.radius() + centerDistance) / 2;
             center_ = s1.center() + (s2.center() - s1.center()).normalized() * (radius - s1.radius());
