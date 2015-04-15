@@ -1,23 +1,28 @@
+/*
+ * Polygon collider.
+ * Bounding sphere cash added, don't speed up.
+ * !Unstable collision point detection.
+ * !Unfinished textures mapping.
+ */
+
 #ifndef HPOLYGONCOLLIDER_H
 #define HPOLYGONCOLLIDER_H
 
 #include <QVector3D>
 #include <QMatrix4x4>
-#include <QMatrix>
 #include <QColor>
 
-#include "icollider.h"
-#include "hcollision.h"
-#include "haccuracy.h"
-#include "ishader.h"
-#include "htracer3.h"
+#include "colliders/icollider.h"    // Base interface
+
+#include "shaders/hshaders.h"
+#include "math/haccuracy.h"
+
 
 class HPolygonCollider : public ICollider
 {
 public:
     // Constructors
     HPolygonCollider();
-
     HPolygonCollider(QVector3D v1, QVector3D v2, QVector3D v3, IShader *shader);
     HPolygonCollider(const HPolygonCollider &collider);
 
@@ -75,6 +80,9 @@ private:
     QVector3D t1_, t2_, t3_;
     IShader *shader_;
     QImage *texture_;
+
+    HSphere boundingSphere_;
+    void computeBoundingSphere();
 
     bool useNormals_;
     bool useTexture_;

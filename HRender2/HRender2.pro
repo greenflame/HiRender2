@@ -14,41 +14,43 @@ TEMPLATE = app
 
 SOURCES += main.cpp\
         mainwindow.cpp \
-    haccuracy.cpp \
-    icollider.cpp \
-    hpolygoncollider.cpp \
-    hspherecollider.cpp \
-    hboundingspherecollider.cpp \
     htracer3.cpp \
-    hcollision.cpp \
-    ishader.cpp \
-    hphongshader.cpp \
-    hskyshader.cpp \
-    hmirrorshader.cpp \
     sscene.cpp \
     spolygon.cpp \
     smaterial.cpp \
-    containers\hfrustum.cpp \
-    containers\hray.cpp \
-    containers\hsphere.cpp
+    hfrustum.cpp \
+    hray.cpp \
+    hsphere.cpp \
+    colliders/icollider.cpp \
+    colliders/hboundingspherecollider.cpp \
+    colliders/hpolygoncollider.cpp \
+    colliders/hspherecollider.cpp \
+    shaders/hmirrorshader.cpp \
+    shaders/hphongshader.cpp \
+    shaders/hskyshader.cpp \
+    shaders/ishader.cpp \
+    hcollision.cpp \
+    math/haccuracy.cpp
 
 HEADERS  += mainwindow.h \
-    haccuracy.h \
-    icollider.h \
-    hpolygoncollider.h \
-    hspherecollider.h \
-    hboundingspherecollider.h \
     htracer3.h \
-    hcollision.h \
-    ishader.h \
-    hphongshader.h \
-    hskyshader.h \
-    hmirrorshader.h \
     sscene.h \
     spolygon.h \
     smaterial.h \
-    containers\hfrustum.h \
-    containers\hray.h \
-    containers\hsphere.h
+    hfrustum.h \
+    hray.h \
+    hsphere.h \
+    colliders/icollider.h \
+    colliders/hboundingspherecollider.h \
+    colliders/hpolygoncollider.h \
+    colliders/hspherecollider.h \
+    shaders/ishader.h \
+    shaders/hmirrorshader.h \
+    shaders/hphongshader.h \
+    shaders/hskyshader.h \
+    hcollision.h \
+    math/haccuracy.h \
+    shaders/hshaders.h \
+    colliders/hcolliders.h
 
 FORMS    += mainwindow.ui

@@ -14,17 +14,10 @@
 #include <QString>
 #include <QThread>
 
-#include "ishader.h"
-#include "hphongshader.h"
-#include "hskyshader.h"
-#include "hmirrorshader.h"
+#include "shaders/hshaders.h"
+#include "colliders/hcolliders.h"
 
-#include "icollider.h"
 #include "hfrustum.h"
-#include "hboundingspherecollider.h"
-#include "hpolygoncollider.h"
-#include "hspherecollider.h"
-#include "icollider.h"
 
 class HTracer3 : public QObject
 {

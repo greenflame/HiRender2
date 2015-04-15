@@ -11,7 +11,9 @@ public:
     HMirrorShader(float spreadAngle, int iterations);
     ~HMirrorShader();
 
-    // IShader interface
+    /*
+     *  IShader interface
+     */
     QColor process(const HCollision &collision, const HTracer3 &tracer) const;
 
     float spreadAngle() const;

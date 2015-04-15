@@ -71,7 +71,8 @@ void MainWindow::on_pushButton_test_clicked()
     HTracer3 tracer3;
 
     // Frustum
-    tracer3.setCameraFrustum(HFrustum(-1, 1, -0.5, 0.5, 2, 1000));
+    tracer3.setCameraFrustum(HFrustum(-1, 1, -0.5, 0.5, 8, 1000));
+    tracer3.setImageSize(QSize(1920, 1080) * 2);
 
     // Geometry
     SScene s;
@@ -81,10 +82,11 @@ void MainWindow::on_pushButton_test_clicked()
     s.copyToTracer(tracer3);
 
     QMatrix4x4 m;
-    m.translate(0, 0, -10);
+    m.translate(-0.3, 0, -10);
     m.rotate(30, 1, 0, 0);
-    m.rotate(30, 0, 1, 0);
-    tracer3.addPointLight(QVector3D(5, 5, 10));
+    m.rotate(-45, 0, 1, 0);
+    m.translate(0, -3, 0);
+    tracer3.addPointLight(QVector3D(4, 6, 1));
     tracer3.setCameraMatrix(m);
 
     connect(&tracer3, SIGNAL(onRenderMessage(QString)), this, SLOT(onRenderMessage(QString)));
@@ -93,6 +95,7 @@ void MainWindow::on_pushButton_test_clicked()
     ui->textEdit_output->clear();
     QImage result = tracer3.render();
     ui->label_renderOutput->setPixmap(QPixmap::fromImage(result));
+    result.save("result.png");
 }
 
 void MainWindow::onTemporaryImageUpdated(QImage image)

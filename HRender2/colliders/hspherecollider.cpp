@@ -5,16 +5,14 @@ HSphereCollider::HSphereCollider()
 
 }
 
-HSphereCollider::HSphereCollider(QVector3D center, float radius)
+HSphereCollider::HSphereCollider(HSphere sphere)
 {
-    setCenter(center);
-    setRadius(radius);
+    setSphere(sphere);
 }
 
-HSphereCollider::HSphereCollider(QVector3D center, float radius, IShader *shader)
+HSphereCollider::HSphereCollider(HSphere sphere, IShader *shader)
 {
-    setCenter(center);
-    setRadius(radius);
+    setSphere(sphere);
     setShader(shader);
 }
 
@@ -54,7 +52,7 @@ bool HSphereCollider::processCollision(const HRay &ray, const HTracer3 &tracer, 
 
 HSphere HSphereCollider::getBoundingSphere() const
 {
-    return HSphere(center(), radius());
+    return sphere_;
 }
 
 ICollider *HSphereCollider::clone() const
@@ -64,27 +62,17 @@ ICollider *HSphereCollider::clone() const
 
 void HSphereCollider::transform(const QMatrix4x4 &m)
 {
-    setCenter(m * center());
+    sphere_.setCenter(m * sphere_.center());
 }
 
-QVector3D HSphereCollider::center() const
+HSphere HSphereCollider::sphere() const
 {
-    return center_;
+    return sphere_;
 }
 
-void HSphereCollider::setCenter(const QVector3D &center)
+void HSphereCollider::setSphere(const HSphere &sphere)
 {
-    center_ = center;
-}
-
-float HSphereCollider::radius() const
-{
-    return radius_;
-}
-
-void HSphereCollider::setRadius(float radius)
-{
-    radius_ = radius;
+    sphere_ = sphere;
 }
 
 IShader *HSphereCollider::shader() const
@@ -99,19 +87,19 @@ void HSphereCollider::setShader(IShader *shader)
 
 bool HSphereCollider::localDetectCollision(const HRay &ray, HCollision &collisionInfo) const
 {
-    if (center().distanceToLine(ray.origin(), ray.direction()) > radius())    //no intersections
+    if (sphere_.center().distanceToLine(ray.origin(), ray.direction()) > sphere_.radius())    //no intersections
         return false;
 
-    if (HAccuracy::floatEqual(center().distanceToPoint(ray.origin()), radius()) /*&&
-            QVector3D::dotProduct(ray.origin() - center(), ray.direction()) > 0*/)    //ray origin on the sphere and directed outside
+    if (HAccuracy::floatEqual(sphere_.center().distanceToPoint(ray.origin()), sphere_.radius()) /*&&
+            QVector3D::dotProduct(ray.origin() - sphere_.center(), ray.direction()) > 0*/)    //ray origin on the sphere and directed outside
         return false;
 
-    QVector3D v = center() - ray.origin();
+    QVector3D v = sphere_.center() - ray.origin();
     QVector3D proj = ray.origin() + QVector3D::dotProduct(v, ray.direction())
             / QVector3D::dotProduct(ray.direction(), ray.direction()) * ray.direction(); //sphere center projection on ray
 
-    float l = sqrtf(powf(radius(), 2) -
-                    powf((center() - proj).length(), 2));
+    float l = sqrtf(powf(sphere_.radius(), 2) -
+                    powf((sphere_.center() - proj).length(), 2));
 
     QVector3D r1 = proj + ray.direction() * l;
     QVector3D r2 = proj - ray.direction() * l;
@@ -119,17 +107,17 @@ bool HSphereCollider::localDetectCollision(const HRay &ray, HCollision &collisio
 
     QVector3D point, normal;
 
-//    if (center().distanceToPoint(ray.origin()) < radius())    //ray origin inside sphere
+//    if (sphere_.center().distanceToPoint(ray.origin()) < sphere_.radius())    //ray origin inside sphere
 //    {
 //        if (QVector3D::dotProduct(ray.direction(), r1 - ray.origin()) > 0)
 //        {
 //            point = r1;
-//            normal = center() - r1;
+//            normal = sphere_.center() - r1;
 //        }
 //        else
 //        {
 //            point = r2;
-//            normal = center() - r2;
+//            normal = sphere_.center() - r2;
 //        }
 //    }
 //    else    //ray origin outside sphere
@@ -139,7 +127,7 @@ bool HSphereCollider::localDetectCollision(const HRay &ray, HCollision &collisio
 //        if (QVector3D::dotProduct(ray.direction(), c - ray.origin()) > 0)
         {
             point = c;
-            normal = c - center();
+            normal = c - sphere_.center();
         }
 //        else
 //        {

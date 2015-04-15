@@ -1,16 +1,15 @@
+/*
+ * Class provides comparation of floating point numbers.
+ * Standart libraries.
+ * !Unstable work.
+ */
+
 #ifndef HACCURACY_H
 #define HACCURACY_H
 
 #include <cmath>
 
 #define EPSILON 0.00001
-
-/*
- * Class provides compatation of floating point numbers.
- * Standart libraries.
- *
- * !Unstable work.
- */
 
 class HAccuracy
 {

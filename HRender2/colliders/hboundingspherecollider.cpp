@@ -7,8 +7,7 @@ HBoundingSphereCollider::HBoundingSphereCollider()
 
 HBoundingSphereCollider::HBoundingSphereCollider(const HBoundingSphereCollider &collider)
 {
-    center_ = collider.center_;
-    radius_ = collider.radius_;
+    boundingSphere_ = collider.boundingSphere_;
 
     for (int i = 0; i < collider.colliders_.length(); i++)
         colliders_.append(collider.colliders_.at(i)->clone());
@@ -22,7 +21,7 @@ HBoundingSphereCollider::~HBoundingSphereCollider()
 
 bool HBoundingSphereCollider::detectCollision(const HRay &ray, QVector3D &collisionPoint, ICollider **collider) const
 {
-    if (center_.distanceToLine(ray.origin(), ray.direction()) > radius_)
+    if (boundingSphere_.center().distanceToLine(ray.origin(), ray.direction()) > boundingSphere_.radius())
         return false;
 
     QVector3D closestCollision;
@@ -74,7 +73,7 @@ bool HBoundingSphereCollider::processCollision(const HRay &ray, const HTracer3 &
 
 HSphere HBoundingSphereCollider::getBoundingSphere() const
 {
-    return HSphere(center_, radius_);
+    return boundingSphere_;
 }
 
 void HBoundingSphereCollider::transform(const QMatrix4x4 &m)
@@ -82,7 +81,7 @@ void HBoundingSphereCollider::transform(const QMatrix4x4 &m)
     for (int i = 0; i < colliders_.length(); i++)
         colliders_.at(i)->transform(m);
 
-    center_ = m * center_;
+    boundingSphere_.setCenter(m * boundingSphere_.center());
 }
 
 ICollider *HBoundingSphereCollider::clone() const
@@ -100,8 +99,7 @@ void HBoundingSphereCollider::computeBoundingSphere()
 {
     if (colliders_.length() == 1)
     {
-        center_ = colliders_[0]->getBoundingSphere().center();
-        radius_ = colliders_[0]->getBoundingSphere().radius();
+        boundingSphere_ = colliders_[0]->getBoundingSphere();
         return;
     }
 
@@ -112,26 +110,24 @@ void HBoundingSphereCollider::computeBoundingSphere()
 
         float centerDistance = s1.center().distanceToPoint(s2.center());
 
-        if (centerDistance < qAbs(s1.radius() - s2.radius()))  //one sphere inside the other
+        if (centerDistance < qAbs(s1.radius() - s2.radius()))  //one sphere is inside other
         {
             if (s1.radius() > s2.radius())
             {
-                center_ = s1.center();
-                radius_ = s1.radius();
+                boundingSphere_ = s1;
                 return;
             }
             else
             {
-                center_ = s2.center();
-                radius_ = s2.radius();
+                boundingSphere_ = s2;
                 return;
             }
         }
         else    // Spheres are not first insede second
         {
             float radius = (s1.radius() + s2.radius() + centerDistance) / 2;
-            center_ = s1.center() + (s2.center() - s1.center()).normalized() * (radius - s1.radius());
-            radius_ = radius;
+            boundingSphere_.setCenter(s1.center() + (s2.center() - s1.center()).normalized() * (radius - s1.radius()));
+            boundingSphere_.setRadius(radius);
             return;
         }
     }
@@ -157,8 +153,7 @@ void HBoundingSphereCollider::computeBoundingSphere()
                 radius = currentRadius;
         }
 
-        center_ = center;
-        radius_ = radius;
+        boundingSphere_ = HSphere(center, radius);
         return;
     }
 }

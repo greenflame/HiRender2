@@ -9,7 +9,9 @@ HPolygonCollider::HPolygonCollider()
 
 HPolygonCollider::HPolygonCollider(QVector3D v1, QVector3D v2, QVector3D v3, IShader *shader)
 {
-    setV1(v1); setV2(v2); setV3(v3);
+    setV1(v1);
+    setV2(v2);
+    setV3(v3);
 
     setShader(shader);
 
@@ -45,12 +47,7 @@ bool HPolygonCollider::processCollision(const HRay &ray, const HTracer3 &tracer,
 
 HSphere HPolygonCollider::getBoundingSphere() const
 {
-    QVector3D center = (v1() + v2() + v3()) / 3;
-    float r1 = center.distanceToPoint(v1());
-    float r2 = center.distanceToPoint(v2());
-    float r3 = center.distanceToPoint(v3());
-    float radius = qMax(r1, qMax(r2, r3));
-    return HSphere(center, radius);
+    return boundingSphere_;
 }
 
 ICollider *HPolygonCollider::clone() const
@@ -64,12 +61,9 @@ void HPolygonCollider::transform(const QMatrix4x4 &m)
     setV2(m * v2());
     setV3(m * v3());
 
-    QVector4D nn1(n1_, 0);
-    setN1(QVector3D(m * nn1));
-    QVector4D nn2(n2_, 0);
-    setN2(QVector3D(m * nn2));
-    QVector4D nn3(n3_, 0);
-    setN3(QVector3D(m * nn3));
+    setN1(QVector3D(m * QVector4D(n1_, 0)));
+    setN2(QVector3D(m * QVector4D(n2_, 0)));
+    setN3(QVector3D(m * QVector4D(n3_, 0)));
 }
 
 QVector3D HPolygonCollider::v1() const
@@ -80,6 +74,7 @@ QVector3D HPolygonCollider::v1() const
 void HPolygonCollider::setV1(const QVector3D &value)
 {
     v1_ = value;
+    computeBoundingSphere();
 }
 
 QVector3D HPolygonCollider::v2() const
@@ -90,6 +85,7 @@ QVector3D HPolygonCollider::v2() const
 void HPolygonCollider::setV2(const QVector3D &value)
 {
     v2_ = value;
+    computeBoundingSphere();
 }
 QVector3D HPolygonCollider::v3() const
 {
@@ -99,6 +95,7 @@ QVector3D HPolygonCollider::v3() const
 void HPolygonCollider::setV3(const QVector3D &value)
 {
     v3_ = value;
+    computeBoundingSphere();
 }
 
 QVector3D HPolygonCollider::n1() const
@@ -197,6 +194,16 @@ bool HPolygonCollider::useTexture() const
 void HPolygonCollider::setUseTexture(bool useTexture)
 {
     useTexture_ = useTexture;
+}
+
+void HPolygonCollider::computeBoundingSphere()
+{
+    QVector3D center = (v1() + v2() + v3()) / 3;
+    float r1 = center.distanceToPoint(v1());
+    float r2 = center.distanceToPoint(v2());
+    float r3 = center.distanceToPoint(v3());
+    float radius = qMax(r1, qMax(r2, r3));
+    boundingSphere_ = HSphere(center, radius);
 }
 
 bool HPolygonCollider::computeCollisionPoint(const HRay &ray, QVector3D &collisionPoint) const

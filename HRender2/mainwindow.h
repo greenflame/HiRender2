@@ -16,7 +16,7 @@
 #include <QTimer>
 
 #include "htracer3.h"
-#include "hspherecollider.h"
+#include "colliders/hcolliders.h"
 
 #include "sscene.h"
 
