@@ -1,3 +1,10 @@
+/*
+ * Collision container. Consist of:
+ * -collision point
+ * -collision normal
+ * -direction to eye
+ */
+
 #ifndef HCOLLISION_H
 #define HCOLLISION_H
 

@@ -12,7 +12,7 @@ public:
     ~HRay();
 
     void transform(const QMatrix4x4 &m);
-    HRay transformed(const QMatrix4x4 &m);
+    HRay transformed(const QMatrix4x4 &m) const;
 
     QVector3D origin() const;
     void setOrigin(const QVector3D &origin);

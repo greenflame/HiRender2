@@ -1,3 +1,9 @@
+/*
+ * Frustum container. Consist of:
+ * -left, right, bottom, top border
+ * -near, far plane
+ */
+
 #ifndef HFRUSTUM_H
 #define HFRUSTUM_H
 

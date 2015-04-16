@@ -72,7 +72,7 @@ void MainWindow::on_pushButton_test_clicked()
 
     // Frustum
     tracer3.setCameraFrustum(HFrustum(-1, 1, -0.5, 0.5, 8, 1000));
-    tracer3.setImageSize(QSize(1920, 1080) * 2);
+    tracer3.setImageSize(QSize(1920, 1080) / 2);
 
     // Geometry
     SScene s;

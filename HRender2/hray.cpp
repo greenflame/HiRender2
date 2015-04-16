@@ -28,7 +28,7 @@ void HRay::transform(const QMatrix4x4 &m)
     setDirection(QVector3D(mt * directionTmp));
 }
 
-HRay HRay::transformed(const QMatrix4x4 &m)
+HRay HRay::transformed(const QMatrix4x4 &m) const
 {
     HRay tmp = *this;
     tmp.transform(m);
