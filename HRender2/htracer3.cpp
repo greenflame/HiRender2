@@ -314,7 +314,7 @@ void HTracer3::deleteTextures()
     textures_.clear();
 }
 
-float HTracer3::ambientOcclusionLightScheme(const HCollision &ci, int samples) const
+float HTracer3::ambientOcclusionLightScheme(const HCollision &ci, int samples) const    //wtf!!!
 {
     int intersectedRays = 0;
 
@@ -365,7 +365,7 @@ QColor HTracer3::traceRay(const HRay &ray) const
             resultColor = HSkyShader("skyTexture").process(HCollision(QVector3D(0, 0, 0),
                                                                     QVector3D(0, 0, 0),
                                                                     -ray.direction()),
-                                                          *this);
+                                                                    *this);
         }
         else
         {
@@ -383,7 +383,7 @@ HRay HTracer3::computeRayForPixel(const QPoint &point) const
                             / imageSize_.width() * point.x(),
                           cameraFrustum_.bottom() + (cameraFrustum_.top() - cameraFrustum_.bottom())
                             / imageSize_.height() * (imageSize_.height() - point.y() - 1),
-                          -cameraFrustum_.nearPlane())).transformed(cameraMatrix_);
+                          -cameraFrustum_.nearPlane())).transformed(cameraMatrix_.inverted());
 }
 
 QColor HTracer3::mixColors(const QColor &c1, const QColor &c2, float k1, float k2)

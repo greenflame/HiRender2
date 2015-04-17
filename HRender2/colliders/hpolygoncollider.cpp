@@ -232,7 +232,7 @@ bool HPolygonCollider::computeCollisionPoint(const HRay &ray, QVector3D &collisi
     angle1 = acosf(angle1);
     angle2 = acosf(angle2);
     angle3 = acosf(angle3);
-    bool isPointInTriangle = fabs((float)(M_PI * 2) - (angle1 + angle2 + angle3)) < 0.001;
+    bool isPointInTriangle = fabs((float)(M_PI * 2) - (angle1 + angle2 + angle3)) < 0.001;  //todo compare
     if (!isPointInTriangle)
         return false;
 

@@ -1,3 +1,9 @@
+/*
+ * Sphere container. Consist of:
+ * -center
+ * -radius
+ */
+
 #ifndef HSPHERE_H
 #define HSPHERE_H
 

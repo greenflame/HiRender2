@@ -1,3 +1,9 @@
+/*
+ * Ray container. Consist of:
+ * -ray origin
+ * -ray direction
+ */
+
 #ifndef HRAY_H
 #define HRAY_H
 

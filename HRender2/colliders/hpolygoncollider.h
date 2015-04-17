@@ -3,6 +3,7 @@
  * Bounding sphere cash added, don't speed up.
  * !Unstable collision point detection.
  * !Unfinished textures mapping.
+ * !Todo fuzzy compare.
  */
 
 #ifndef HPOLYGONCOLLIDER_H
