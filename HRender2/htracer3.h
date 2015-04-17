@@ -16,6 +16,7 @@
 
 #include "shaders/hshaders.h"
 #include "colliders/hcolliders.h"
+#include "htilecontroller.h"
 
 #include "hfrustum.h"
 
@@ -82,15 +83,6 @@ private:
     QSize tileSize_;
     QColor backgroundColor_;
 
-    // Tile controller
-    bool *tileMap_;
-    int widthTiles_;
-    int heightTiles_;
-    int renderedTiles_;
-    void initializeTileMap();
-    void deleteTileMap();
-    bool getNextTile(QRect &rect);
-
     // Colliders list
     QVector<ICollider *> colliders_;
     void deleteColliders();
@@ -123,8 +115,6 @@ private:
 
     // STH.. static
     static QColor mixColors(const QColor &c1, const QColor &c2, float k1, float k2);
-    static float distance(const QPoint &p1, const QPoint &p2);
-
 
 };
 

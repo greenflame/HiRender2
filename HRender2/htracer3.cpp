@@ -29,7 +29,7 @@ QImage HTracer3::render()
     if (colliders_.length() == 0)
         return resultImage;
 
-    initializeTileMap();
+    HTileController tileController(imageSize_, tileSize_);
 
     if (boundingTreeHead_ == 0)
     {
@@ -46,7 +46,7 @@ QImage HTracer3::render()
     emit onRenderMessage("Tracing...");
     int renderingTime = 0;
     QRect tile;
-    while (getNextTile(tile))
+    while (tileController.getNextTile(tile))
     {
         timer.start();
         renderRect(resultImage, tile);
@@ -54,8 +54,6 @@ QImage HTracer3::render()
         emit onTemporaryImageUpdated(resultImage);
     }
     emit onRenderMessage(tr("Ok. Time: %0.").arg(renderingTime));
-
-    deleteTileMap();
 
     return resultImage;
 }
@@ -167,69 +165,6 @@ void HTracer3::setBackgroundColor(const QColor &backgroundColor)
     backgroundColor_ = backgroundColor;
 }
 
-void HTracer3::initializeTileMap()
-{
-    widthTiles_ = imageSize().width() / tileSize().width() +
-            (imageSize().width() % tileSize().width() == 0 ? 0 : 1);
-
-    heightTiles_ = imageSize().height() / tileSize().height() +
-            (imageSize().height() % tileSize().height() == 0 ? 0 : 1);
-
-    renderedTiles_ = 0;
-
-    tileMap_ = new bool[widthTiles_ * heightTiles_];
-
-    for (int i = 0; i < widthTiles_ * heightTiles_; i++)
-        tileMap_[i] = false;
-}
-
-void HTracer3::deleteTileMap()
-{
-    delete[] tileMap_;
-}
-
-bool HTracer3::getNextTile(QRect &rect)
-{
-    QPoint midleTile(widthTiles_ / 2, heightTiles_ / 2);
-    QPoint closestTile;
-    bool isImageFinished = true;
-
-    for (int y = 0; y < heightTiles_; y++)
-        for (int x = 0; x < widthTiles_; x++)
-        {
-            QPoint currentTile(x, y);
-            bool isCurrentTileRendered = tileMap_[y * widthTiles_ + x];
-            if (!isCurrentTileRendered)
-            {
-                if (isImageFinished)
-                {
-                    isImageFinished = false;
-                    closestTile = currentTile;
-                }
-                else
-                {
-                    if (distance(midleTile, currentTile) < distance(midleTile, closestTile))
-                    {
-                        closestTile = currentTile;
-                    }
-                }
-            }
-        }
-
-    if (isImageFinished)
-        return false;
-
-    tileMap_[closestTile.y() * widthTiles_ + closestTile.x()] = true;
-
-    int x = closestTile.x() * tileSize_.width();
-    int y = closestTile.y() * tileSize_.height();
-
-    rect = QRect(x, y,
-                 qMin(tileSize_.width(), imageSize_.width() - x),
-                 qMin(tileSize_.height(), imageSize_.height() - y));
-    return true;
-}
-
 void HTracer3::deleteColliders()
 {
     for (int i = 0; i < colliders_.length(); i++)
@@ -254,10 +189,10 @@ void HTracer3::buildBoundingTree()
 
     while (clones.length() != 1)
     {
-        ICollider *closestToFirst = clones.at(1);
+        int closestToFirstIndex = 1;
 
         float dist = clones.at(0)->getBoundingSphere().center()
-                .distanceToPoint(closestToFirst->getBoundingSphere().center());
+                .distanceToPoint(clones.at(closestToFirstIndex)->getBoundingSphere().center());
 
         for (int i = 1; i < clones.length(); i++)
         {
@@ -266,18 +201,17 @@ void HTracer3::buildBoundingTree()
 
             if (currentDist < dist)
             {
-                closestToFirst = clones.at(i);
-                dist = clones.at(0)->getBoundingSphere().center()
-                        .distanceToPoint(closestToFirst->getBoundingSphere().center());
+                closestToFirstIndex = i;
+                dist = currentDist;
             }
         }
 
         HBoundingSphereCollider *hbsc = new HBoundingSphereCollider();
         hbsc->addCollider(clones.at(0));
-        hbsc->addCollider(closestToFirst);
+        hbsc->addCollider(clones.at(closestToFirstIndex));
 
+        clones.removeAt(closestToFirstIndex);
         clones.removeAt(0);
-        clones.removeOne(closestToFirst);
 
         clones.append(hbsc);
     }
@@ -391,11 +325,4 @@ QColor HTracer3::mixColors(const QColor &c1, const QColor &c2, float k1, float k
     return QColor((c1.red() * k1 + c2.red() * k2)/(k1 + k2),
                   (c1.green() * k1 + c2.green() * k2)/(k1 + k2),
                   (c1.blue() * k1 + c2.blue() * k2)/(k1 + k2));
-}
-
-float HTracer3::distance(const QPoint &p1, const QPoint &p2)
-{
-    float x = p1.x() - p2.x();
-    float y = p1.y() - p2.y();
-    return sqrt(x * x + y * y);
 }
