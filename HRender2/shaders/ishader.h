@@ -2,6 +2,7 @@
 #define ISHADER_H
 
 #include <QColor>
+#include <QStack>
 
 #include "hcollision.h"
 
@@ -24,7 +25,7 @@ public:
      *  Output:
      *  -color [result color of the collision]
      */
-    virtual QColor process(const HCollision &collision, const HTracer3 &tracer) const = 0;
+    virtual QColor process(const HCollision &collision, const HTracer3 &tracer, QStack<IShader *> &shaderStack) const = 0;
 };
 
 #endif // ISHADER_H

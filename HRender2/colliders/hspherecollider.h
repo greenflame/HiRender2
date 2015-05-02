@@ -14,7 +14,6 @@
 
 #include "icollider.h"
 #include "math/haccuracy.h"
-#include "shaders/hshaders.h"
 
 class HSphereCollider : public ICollider
 {
@@ -27,7 +26,7 @@ public:
 
     // ICollider interface
     bool detectCollision(const HRay &ray, QVector3D &collisionPoint, ICollider **collider) const;
-    bool processCollision(const HRay &ray, const HTracer3 &tracer, QColor &resultColor) const;
+    bool processCollision(const HRay &ray, const HTracer3 &tracer, QColor &resultColor, QStack<IShader *> &shaderStack) const;
 
     HSphere getBoundingSphere() const;
     ICollider *clone() const;

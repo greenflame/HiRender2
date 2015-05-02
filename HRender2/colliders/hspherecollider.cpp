@@ -36,14 +36,14 @@ bool HSphereCollider::detectCollision(const HRay &ray, QVector3D &collisionPoint
     return false;
 }
 
-bool HSphereCollider::processCollision(const HRay &ray, const HTracer3 &tracer, QColor &resultColor) const
+bool HSphereCollider::processCollision(const HRay &ray, const HTracer3 &tracer, QColor &resultColor, QStack<IShader *> &shaderStack) const
 {
     HCollision collision;
     bool isCollisionExists = localDetectCollision(ray, collision);
 
     if (isCollisionExists)
     {
-        resultColor = shader_->process(collision, tracer);
+        resultColor = shader_->process(collision, tracer, shaderStack);
         return true;
     }
 

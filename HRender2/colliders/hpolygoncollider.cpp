@@ -31,7 +31,7 @@ bool HPolygonCollider::detectCollision(const HRay &ray, QVector3D &collisionPoin
     return isCollisionPointExists;
 }
 
-bool HPolygonCollider::processCollision(const HRay &ray, const HTracer3 &tracer, QColor &resultColor) const
+bool HPolygonCollider::processCollision(const HRay &ray, const HTracer3 &tracer, QColor &resultColor, QStack<IShader *> &shaderStack) const
 {
     QVector3D collisionPoint;
     bool isCollisionPointExists = computeCollisionPoint(ray, collisionPoint);
@@ -41,7 +41,7 @@ bool HPolygonCollider::processCollision(const HRay &ray, const HTracer3 &tracer,
     QVector3D collisionNormal = computeNormal(ray, collisionPoint);
     HCollision collision = HCollision(collisionPoint, collisionNormal, -ray.direction());
 
-    resultColor = shader_->process(collision, tracer);
+    resultColor = shader_->process(collision, tracer, shaderStack);
     return true;
 }
 

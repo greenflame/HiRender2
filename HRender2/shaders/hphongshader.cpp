@@ -10,7 +10,7 @@ HPhongShader::HPhongShader(const QColor &diffuseColor)
     setDiffuseColor(diffuseColor);
 }
 
-QColor HPhongShader::process(const HCollision &collision, const HTracer3 &tracer) const
+QColor HPhongShader::process(const HCollision &collision, const HTracer3 &tracer, QStack<IShader *> &shaderStack) const
 {
     float lightness = qMin(lambertLightScheme(collision, tracer), shadowLightScheme(collision, tracer));
     QColor resultColor = HTracer3::mixColors(diffuseColor(), Qt::black, lightness, 1 - lightness);

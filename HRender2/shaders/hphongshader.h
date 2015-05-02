@@ -11,7 +11,7 @@ public:
     HPhongShader(const QColor &diffuseColor);
 
     // IShader interface
-    QColor process(const HCollision &collision, const HTracer3 &tracer) const;
+    QColor process(const HCollision &collision, const HTracer3 &tracer, QStack<IShader *> &shaderStack) const;
 
     QColor diffuseColor() const;
     void setDiffuseColor(const QColor &diffuseColor);

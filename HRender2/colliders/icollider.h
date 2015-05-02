@@ -7,6 +7,9 @@
 
 #include <QVector3D>
 #include <QColor>
+#include <QStack>
+
+#include <shaders/ishader.h>
 
 #include "hcollision.h"
 #include "hray.h"
@@ -31,6 +34,7 @@ public:
     virtual bool detectCollision(const HRay &ray, QVector3D &collisionPoint, ICollider **collider) const = 0;
     virtual bool detectCollision(const HRay &ray, QVector3D &collisionPoint) const;
     virtual bool detectCollision(const HRay &ray, ICollider **collider) const;
+    virtual bool detectCollision(const HRay &ray) const;
 
     /*
      * Input:
@@ -41,7 +45,7 @@ public:
      * -return [collision exists]
      * -resultColor [result color of collision]
      */
-    virtual bool processCollision(const HRay &ray, const HTracer3 &tracer, QColor &resultColor) const = 0;
+    virtual bool processCollision(const HRay &ray, const HTracer3 &tracer, QColor &resultColor, QStack<IShader *> &shaderStack) const = 0;
 
     virtual HSphere getBoundingSphere() const = 0;
     virtual void transform(const QMatrix4x4 &m) = 0;

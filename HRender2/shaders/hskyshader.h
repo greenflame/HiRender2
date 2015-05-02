@@ -12,7 +12,7 @@ public:
     ~HSkyShader();
 
     // IShader interface
-    QColor process(const HCollision &collision, const HTracer3 &tracer) const;
+    QColor process(const HCollision &collision, const HTracer3 &tracer, QStack<IShader *> &shaderStack) const;
 
     QString textureName() const;
     void setTextureName(const QString &textureName);

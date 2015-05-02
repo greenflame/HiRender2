@@ -39,6 +39,9 @@ public:
 
     // Shaders
     void addPhongShader(const QString &name, const QColor &diffuseColor);
+    void addMirrorShader(const QString &name, float spreadAngle, int iterations);
+    void addRefractionShader(const QString &name, float ior);
+    void addAmbientOcclusionShader(const QString &name, int iterations);
 
     // Lights
     void addPointLight(const QVector3D &position);
@@ -65,14 +68,20 @@ public:
     QColor backgroundColor() const;
     void setBackgroundColor(const QColor &backgroundColor);
 
+    int rayLifeTime() const;
+    void setRayLifeTime(int rayLifeTime);
+
 signals:
     void onTemporaryImageUpdated(QImage image);
     void onRenderMessage(QString message);
 
 private:
-    friend class HPhongShader;
     friend class HSkyShader;
+
+    friend class HPhongShader;
     friend class HMirrorShader;
+    friend class HAmbientOcclusionShader;
+    friend class HRefractionShader;
 
     // Camera settings
     HFrustum cameraFrustum_;
@@ -82,6 +91,9 @@ private:
     QSize imageSize_;
     QSize tileSize_;
     QColor backgroundColor_;
+
+    // Render settings
+    int rayLifeTime_;
 
     // Colliders list
     QVector<ICollider *> colliders_;
@@ -103,13 +115,10 @@ private:
     QMap<QString, QImage*> textures_;
     void deleteTextures();
 
-    // Light schemes
-    float ambientOcclusionLightScheme(const HCollision &ci, int samples) const; ///???????whf???
-
     // STH... render
     void renderRect(QImage &image, const QRect &rect) const;
     void renderPixel(QImage &image, const QPoint &pixel) const;
-    QColor traceRay(const HRay &ray) const;
+    QColor traceRay(const HRay &ray, QStack<IShader *> shaderStack) const;
 
     HRay computeRayForPixel(const QPoint &point) const;
 

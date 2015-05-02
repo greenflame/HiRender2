@@ -193,6 +193,31 @@ void SScene::copyToTracer(HTracer3 &tracer)
     }
 }
 
+void SScene::copyToTracer(HTracer3 &tracer, const QString &shader)
+{
+    // Copy polygons
+    for (int i = 0; i < polygons.length(); i++)
+    {
+        SPolygon polygon = polygons.at(i);
+
+        if (polygon.useNormals())
+        {
+            tracer.addPolygon(polygon.v1(), polygon.v2(), polygon.v3(),
+                              polygon.n1(), polygon.n2(), polygon.n3(), shader);
+        }
+        else
+        {
+            tracer.addPolygon(polygon.v1(), polygon.v2(), polygon.v3(), shader);
+        }
+    }
+
+    // Copy lamps
+    for (int i = 0; i < lights.length(); i++)
+    {
+        tracer.addPointLight(lights.at(i));
+    }
+}
+
 bool SScene::loadMtl(const QString &fileName)
 {
     QFile inputFile(fileName);

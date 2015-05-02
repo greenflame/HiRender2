@@ -8,6 +8,7 @@ HTracer3::HTracer3(QObject *parent) : QObject(parent)
     setImageSize(QSize(1280, 720));
     setTileSize(QSize(128, 128));
     setBackgroundColor(Qt::black);
+    setRayLifeTime(8);
 
     addPhongShader("default", Qt::gray);
 }
@@ -93,6 +94,21 @@ void HTracer3::addPhongShader(const QString &name, const QColor &diffuseColor)
     shaders_.insert(name, new HPhongShader(diffuseColor));
 }
 
+void HTracer3::addMirrorShader(const QString &name, float spreadAngle, int iterations)
+{
+    shaders_.insert(name, new HMirrorShader(spreadAngle, iterations));
+}
+
+void HTracer3::addRefractionShader(const QString &name, float ior)
+{
+    shaders_.insert(name, new HRefractionShader(ior));
+}
+
+void HTracer3::addAmbientOcclusionShader(const QString &name, int iterations)
+{
+    shaders_.insert(name, new HAmbientOcclusionShader(iterations));
+}
+
 void HTracer3::addPointLight(const QVector3D &position)
 {
     pointLights_.append(position);
@@ -163,6 +179,16 @@ QColor HTracer3::backgroundColor() const
 void HTracer3::setBackgroundColor(const QColor &backgroundColor)
 {
     backgroundColor_ = backgroundColor;
+}
+
+int HTracer3::rayLifeTime() const
+{
+    return rayLifeTime_;
+}
+
+void HTracer3::setRayLifeTime(int rayLifeTime)
+{
+    rayLifeTime_ = rayLifeTime;
 }
 
 void HTracer3::deleteColliders()
@@ -248,28 +274,6 @@ void HTracer3::deleteTextures()
     textures_.clear();
 }
 
-float HTracer3::ambientOcclusionLightScheme(const HCollision &ci, int samples) const    //wtf!!!
-{
-    int intersectedRays = 0;
-
-    for (int i = 0; i < samples; i++)
-    {
-        QVector3D direction(-1 + qrand() / (double)RAND_MAX * 2.0,
-                         -1 + qrand() / (double)RAND_MAX * 2.0,
-                         -1 + qrand() / (double)RAND_MAX * 2.0);
-
-        if (QVector3D::dotProduct(direction, ci.normal()) < 0)
-            direction = -direction;
-
-        QVector3D tmpPoint;
-        ICollider *tmpCollider;
-        if (boundingTreeHead_->detectCollision(HRay(ci.point(), direction), tmpPoint, &tmpCollider))
-            intersectedRays++;
-    }
-
-    return 1 - (float)intersectedRays / samples;
-}
-
 void HTracer3::renderRect(QImage &image, const QRect &rect) const
 {
     for (int y = rect.top(); y < rect.top() + rect.height(); y++)
@@ -282,15 +286,18 @@ void HTracer3::renderRect(QImage &image, const QRect &rect) const
 void HTracer3::renderPixel(QImage &image, const QPoint &pixel) const
 {
     HRay ray = computeRayForPixel(pixel);
-    QColor resultColor = traceRay(ray);
+
+    QStack<IShader *> shaderStack;
+
+    QColor resultColor = traceRay(ray, shaderStack);
     image.setPixel(pixel, resultColor.rgba());
 }
 
-QColor HTracer3::traceRay(const HRay &ray) const
+QColor HTracer3::traceRay(const HRay &ray, QStack<IShader *> shaderStack) const
 {
     QColor resultColor;
 
-    bool isCollisionExist = boundingTreeHead_->processCollision(ray, *this, resultColor);
+    bool isCollisionExist = boundingTreeHead_->processCollision(ray, *this, resultColor, shaderStack);
 
     if (!isCollisionExist)
     {
@@ -299,7 +306,8 @@ QColor HTracer3::traceRay(const HRay &ray) const
             resultColor = HSkyShader("skyTexture").process(HCollision(QVector3D(0, 0, 0),
                                                                     QVector3D(0, 0, 0),
                                                                     -ray.direction()),
-                                                                    *this);
+                                                                    *this,
+                                                                    shaderStack);
         }
         else
         {

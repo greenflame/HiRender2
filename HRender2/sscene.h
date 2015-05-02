@@ -28,6 +28,7 @@ public:
     bool loadObj(const QString &fileName);
 
     void copyToTracer(HTracer3 &tracer);
+    void copyToTracer(HTracer3 &tracer, const QString &shader);
 
 private:
     bool loadMtl(const QString &fileName);

@@ -14,7 +14,7 @@ public:
     /*
      *  IShader interface
      */
-    QColor process(const HCollision &collision, const HTracer3 &tracer) const;
+    QColor process(const HCollision &collision, const HTracer3 &tracer, QStack<IShader *> &shaderStack) const;
 
     float spreadAngle() const;
     void setSpreadAngle(float spreadAngle);

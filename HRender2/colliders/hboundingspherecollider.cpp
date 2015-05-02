@@ -61,14 +61,14 @@ bool HBoundingSphereCollider::detectCollision(const HRay &ray, QVector3D &collis
     return false;
 }
 
-bool HBoundingSphereCollider::processCollision(const HRay &ray, const HTracer3 &tracer, QColor &resultColor) const
+bool HBoundingSphereCollider::processCollision(const HRay &ray, const HTracer3 &tracer, QColor &resultColor, QStack<IShader *> &shaderStack) const
 {
     ICollider *collider;
     bool isCollisonExists = ICollider::detectCollision(ray, &collider);
     if (!isCollisonExists)
         return false;
 
-    return collider->processCollision(ray, tracer, resultColor);
+    return collider->processCollision(ray, tracer, resultColor, shaderStack);
 }
 
 HSphere HBoundingSphereCollider::getBoundingSphere() const

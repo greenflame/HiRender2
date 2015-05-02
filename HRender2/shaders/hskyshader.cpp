@@ -15,7 +15,7 @@ HSkyShader::~HSkyShader()
 
 }
 
-QColor HSkyShader::process(const HCollision &collision, const HTracer3 &tracer) const
+QColor HSkyShader::process(const HCollision &collision, const HTracer3 &tracer, QStack<IShader *> &shaderStack) const
 {
     QImage &texture = *tracer.textures_[textureName_];
     QVector3D ratDirection = -collision.directionToEye();

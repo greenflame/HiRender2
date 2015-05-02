@@ -31,7 +31,9 @@ SOURCES += main.cpp\
     shaders/ishader.cpp \
     hcollision.cpp \
     math/haccuracy.cpp \
-    htilecontroller.cpp
+    htilecontroller.cpp \
+    shaders/hambientocclusionshader.cpp \
+    shaders/hrefractionshader.cpp
 
 HEADERS  += mainwindow.h \
     htracer3.h \
@@ -53,6 +55,8 @@ HEADERS  += mainwindow.h \
     math/haccuracy.h \
     shaders/hshaders.h \
     colliders/hcolliders.h \
-    htilecontroller.h
+    htilecontroller.h \
+    shaders/hambientocclusionshader.h \
+    shaders/hrefractionshader.h
 
 FORMS    += mainwindow.ui

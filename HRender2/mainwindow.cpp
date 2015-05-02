@@ -71,28 +71,31 @@ void MainWindow::on_pushButton_test_clicked()
     HTracer3 tracer3;
 
     // Frustum
-    tracer3.setCameraFrustum(HFrustum(-1, 1, -0.5, 0.5, 2, 1000));
+    tracer3.setCameraFrustum(HFrustum(-1, 1, -0.5, 0.5, 1, 1000));
     tracer3.setImageSize(QSize(1920, 1080) / 2);
 
     // Geometry
     SScene s;
     QString fileName = QFileDialog::getOpenFileName(this);
     QCoreApplication::processEvents(QEventLoop::AllEvents, 100);
-    s.loadObj(fileName);
-    s.copyToTracer(tracer3);
+
 
     QMatrix4x4 m;
-//    m.translate(-0.3, 0, -10);
+    m.translate(0, 0, -3);
 //    m.rotate(30, 1, 0, 0);
-//    m.rotate(-45, 0, 1, 0);
-//    m.translate(0, -3, 0);
-    m.translate(0, 0, -10);
-    m.rotate(30, 1, 0, 0);
-    m.rotate(30, 0, 1, 0);
-
+//    m.rotate(30, 0, 1, 0);
 
     tracer3.addPointLight(QVector3D(4, 6, 1));
     tracer3.setCameraMatrix(m);
+
+    tracer3.addAmbientOcclusionShader("ao", 10);
+    tracer3.addMirrorShader("ms", 2, 10);
+    tracer3.addRefractionShader("rs", 1.0);
+    tracer3.addTexture("skyTexture", QImage("/Users/Alexander/Desktop/pano1.jpg"));
+
+    s.loadObj(fileName);
+    s.copyToTracer(tracer3, "ms");
+
 
     connect(&tracer3, SIGNAL(onRenderMessage(QString)), this, SLOT(onRenderMessage(QString)));
     connect(&tracer3, SIGNAL(onTemporaryImageUpdated(QImage)), this, SLOT(onTemporaryImageUpdated(QImage)));
