@@ -87,7 +87,7 @@ private:
     bool useNormals_;
     bool useTexture_;
 
-    bool computeCollisionPoint(const HRay &ray, QVector3D &collisionPoint) const;
+//    bool computeCollisionPoint(const HRay &ray, QVector3D &collisionPoint) const;
     QVector3D computeNormal(const HRay &ray, const QVector3D &collisionPoint) const;
 
     static QVector3D projectPointOnLine(QVector3D l1, QVector3D l2, QVector3D p);

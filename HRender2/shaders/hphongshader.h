@@ -17,9 +17,6 @@ public:
     void setDiffuseColor(const QColor &diffuseColor);
 
 private:
-    float lambertLightScheme(const HCollision &ci, const HTracer3 &tracer) const;
-    float shadowLightScheme(const HCollision &ci, const HTracer3 &tracer) const;
-
     QColor diffuseColor_;
 };
 

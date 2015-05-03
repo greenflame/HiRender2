@@ -27,14 +27,57 @@ HPolygonCollider::HPolygonCollider(const HPolygonCollider &collider)
 bool HPolygonCollider::detectCollision(const HRay &ray, QVector3D &collisionPoint, ICollider **collider) const
 {
     *collider = const_cast<HPolygonCollider*>(this);
-    bool isCollisionPointExists = computeCollisionPoint(ray, collisionPoint);
-    return isCollisionPointExists;
+
+//    float EPSILON = 0.000001;
+
+    QVector3D e1, e2;  //Edge1, Edge2
+    QVector3D P, Q, T;
+    float det, inv_det, u, v;
+    float t;
+
+    //Find vectors for two edges sharing V1
+    e1 = v2_ - v1_;
+    e2 = v3_ - v1_;
+    //Begin calculating determinant - also used to calculate u parameter
+    P = QVector3D::crossProduct(ray.direction(), e2);
+    //if determinant is near zero, ray lies in plane of triangle
+    det = QVector3D::dotProduct(e1, P);
+    //NOT CULLING
+    if(det > -EPSILON && det < EPSILON) return false;
+    inv_det = 1.f / det;
+
+    //calculate distance from V1 to ray origin
+    T =  ray.origin() - v1_;
+
+    //Calculate u parameter and test bound
+    u = QVector3D::dotProduct(T, P) * inv_det;
+    //The intersection lies outside of the triangle
+    if(u < 0.f || u > 1.f) return false;
+
+    //Prepare to test v parameter
+    Q = QVector3D::crossProduct(T, e1);
+
+    //Calculate V parameter and test bound
+    v = QVector3D::dotProduct(ray.direction(), Q) * inv_det;
+    //The intersection lies outside of the triangle
+    if(v < 0.f || u + v  > 1.f) return false;
+
+    t = QVector3D::dotProduct(e2, Q) * inv_det;
+
+    if(t > EPSILON)
+    { //ray intersection
+        collisionPoint = ray.origin() + ray.direction() * t;
+        return true;
+    }
+
+    // No hit, no win
+    return false;
 }
 
 bool HPolygonCollider::processCollision(const HRay &ray, const HTracer3 &tracer, QColor &resultColor, QStack<IShader *> &shaderStack) const
 {
     QVector3D collisionPoint;
-    bool isCollisionPointExists = computeCollisionPoint(ray, collisionPoint);
+    bool isCollisionPointExists = ICollider::detectCollision(ray, collisionPoint);
     if (!isCollisionPointExists)
         return false;
 
@@ -206,38 +249,38 @@ void HPolygonCollider::computeBoundingSphere()
     boundingSphere_ = HSphere(center, radius);
 }
 
-bool HPolygonCollider::computeCollisionPoint(const HRay &ray, QVector3D &collisionPoint) const
-{
-    QVector3D planeNormal = QVector3D::crossProduct(v2_ - v1_, v3_ - v1_).normalized();
+//bool HPolygonCollider::computeCollisionPoint(const HRay &ray, QVector3D &collisionPoint) const
+//{
+//    QVector3D planeNormal = QVector3D::crossProduct(v2_ - v1_, v3_ - v1_).normalized();
 
-    bool isPlaneRayParallel = HAccuracy::floatEqual(QVector3D::dotProduct(planeNormal, ray.direction()), 0);
-    if (isPlaneRayParallel)
-        return false;
+//    bool isPlaneRayParallel = HAccuracy::floatEqual(QVector3D::dotProduct(planeNormal, ray.direction()), 0);
+//    if (isPlaneRayParallel)
+//        return false;
 
-    bool isRayOriginOnPlane = HAccuracy::floatEqual(QVector3D::dotProduct(ray.origin() - v1_, planeNormal), 0);
-    if (isRayOriginOnPlane)
-        return false;
+//    bool isRayOriginOnPlane = HAccuracy::floatEqual(QVector3D::dotProduct(ray.origin() - v1_, planeNormal), 0);
+//    if (isRayOriginOnPlane)
+//        return false;
 
-    float scale = QVector3D::dotProduct(planeNormal, v1() - ray.origin()) / QVector3D::dotProduct(planeNormal, ray.direction());
+//    float scale = QVector3D::dotProduct(planeNormal, v1() - ray.origin()) / QVector3D::dotProduct(planeNormal, ray.direction());
 
-    bool isPointOnRay = scale > 0;
-    if (!isPointOnRay)
-        return false;
+//    bool isPointOnRay = scale > 0;
+//    if (!isPointOnRay)
+//        return false;
 
-    collisionPoint = ray.origin() + ray.direction() * scale;
+//    collisionPoint = ray.origin() + ray.direction() * scale;
 
-    float angle1 = QVector3D::dotProduct((v1_ - collisionPoint).normalized(), (v2_ - collisionPoint).normalized());
-    float angle2 = QVector3D::dotProduct((v2_ - collisionPoint).normalized(), (v3_ - collisionPoint).normalized());
-    float angle3 = QVector3D::dotProduct((v3_ - collisionPoint).normalized(), (v1_ - collisionPoint).normalized());
-    angle1 = acosf(angle1);
-    angle2 = acosf(angle2);
-    angle3 = acosf(angle3);
-    bool isPointInTriangle = fabs((float)(M_PI * 2) - (angle1 + angle2 + angle3)) < 0.001;  //todo compare
-    if (!isPointInTriangle)
-        return false;
+//    float angle1 = QVector3D::dotProduct((v1_ - collisionPoint).normalized(), (v2_ - collisionPoint).normalized());
+//    float angle2 = QVector3D::dotProduct((v2_ - collisionPoint).normalized(), (v3_ - collisionPoint).normalized());
+//    float angle3 = QVector3D::dotProduct((v3_ - collisionPoint).normalized(), (v1_ - collisionPoint).normalized());
+//    angle1 = acosf(angle1);
+//    angle2 = acosf(angle2);
+//    angle3 = acosf(angle3);
+//    bool isPointInTriangle = fabs((float)(M_PI * 2) - (angle1 + angle2 + angle3)) < 0.001;  //todo compare
+//    if (!isPointInTriangle)
+//        return false;
 
-    return true;
-}
+//    return true;
+//}
 
 QVector3D HPolygonCollider::computeNormal(const HRay &ray, const QVector3D &collisionPoint) const
 {
