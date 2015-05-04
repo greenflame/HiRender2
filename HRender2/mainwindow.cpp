@@ -91,13 +91,13 @@ void MainWindow::on_pushButton_test_clicked()
     tracer3.setRayLifeTime(3);
 
     tracer3.addPhongShader("ps", Qt::gray);
-    tracer3.addAmbientOcclusionShader("ao", 10);
+    tracer3.addAmbientOcclusionShader("ao", 1);
     tracer3.addMirrorShader("ms", 1, 3);
     tracer3.addRefractionShader("rs", 1.0);
 //    tracer3.addTexture("skyTexture", QImage("/Users/Alexander/Desktop/pano1.jpg"));
 
     s.loadObj(fileName);
-    s.copyToTracer(tracer3, "ms");
+    s.copyToTracer(tracer3, "ps");
 
 
     connect(&tracer3, SIGNAL(onRenderMessage(QString)), this, SLOT(onRenderMessage(QString)));

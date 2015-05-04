@@ -82,13 +82,6 @@ void HTracer3::addPolygon(const QVector3D &v1, const QVector3D &v2, const QVecto
     colliders_.append(collider);
 }
 
-void HTracer3::addSphere(const QVector3D &center, float radius, const QString &shaderName)
-{
-    QString resultShaderName = shaders_.contains(shaderName) ? shaderName : "default";
-
-    colliders_.append(new HSphereCollider(HSphere(center, radius), shaders_[resultShaderName]));
-}
-
 void HTracer3::addPhongShader(const QString &name, const QColor &diffuseColor)
 {
     shaders_.insert(name, new HPhongShader(diffuseColor));

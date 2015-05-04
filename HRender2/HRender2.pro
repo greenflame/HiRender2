@@ -24,7 +24,6 @@ SOURCES += main.cpp\
     colliders/icollider.cpp \
     colliders/hboundingspherecollider.cpp \
     colliders/hpolygoncollider.cpp \
-    colliders/hspherecollider.cpp \
     shaders/hmirrorshader.cpp \
     shaders/hphongshader.cpp \
     shaders/hskyshader.cpp \
@@ -46,7 +45,6 @@ HEADERS  += mainwindow.h \
     colliders/icollider.h \
     colliders/hboundingspherecollider.h \
     colliders/hpolygoncollider.h \
-    colliders/hspherecollider.h \
     shaders/ishader.h \
     shaders/hmirrorshader.h \
     shaders/hphongshader.h \

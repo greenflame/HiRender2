@@ -6,6 +6,7 @@
 #define ICOLLIDER_H
 
 #include <QVector3D>
+#include <QMatrix4x4>
 #include <QColor>
 #include <QStack>
 
