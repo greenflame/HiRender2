@@ -16,9 +16,11 @@
 
 #include "shaders/hshaders.h"
 #include "colliders/hcolliders.h"
-#include "htilecontroller.h"
 
-#include "hfrustum.h"
+#include "htilecontroller.h"
+#include "hbvh.h"
+
+#include "geometry/hfrustum.h"
 
 class HTracer3 : public QObject
 {
@@ -45,7 +47,7 @@ public:
     void addPointLight(const QVector3D &position);
 
     //Textures
-    void addTexture(const QString &name, const QImage &image);  ///not used?
+    void addTexture(const QString &name, const QImage &image);
 
     // Scene
     void transformScene(const QMatrix4x4 &matrix);
@@ -96,11 +98,7 @@ private:
     // Colliders list
     QVector<ICollider *> colliders_;
     void deleteColliders();
-
-    // Colliders bounding tree controller
-    ICollider *boundingTreeHead_;
-    void buildBoundingTree();
-    void deleteBoundingTree();
+    HBVH bvh;
 
     // Materials
     QMap<QString, IShader*> shaders_;
@@ -113,12 +111,11 @@ private:
     QMap<QString, QImage*> textures_;
     void deleteTextures();
 
-    // STH... render
+    // Render mechanics
     void renderRect(QImage &image, const QRect &rect) const;
     void renderPixel(QImage &image, const QPoint &pixel) const;
-    QColor traceRay(const HRay &ray, QStack<IShader *> shaderStack) const;
-
     HRay computeRayForPixel(const QPoint &point) const;
+    QColor traceRay(const HRay &ray, QStack<IShader *> shaderStack) const;
 
     // STH.. static
     static QColor mixColors(const QColor &c1, const QColor &c2, float k1, float k2);

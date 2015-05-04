@@ -12,9 +12,9 @@
 
 #include <shaders/ishader.h>
 
-#include "hcollision.h"
-#include "hray.h"
-#include "hsphere.h"
+#include "geometry/hcollision.h"
+#include "geometry/hray.h"
+#include "geometry/hsphere.h"
 
 class HTracer3;
 

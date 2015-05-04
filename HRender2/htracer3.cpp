@@ -2,8 +2,6 @@
 
 HTracer3::HTracer3(QObject *parent) : QObject(parent)
 {
-    boundingTreeHead_ = 0;
-
     setCameraFrustum(HFrustum(-0.9, 0.9, -0.5, 0.5, 1, 1000));
     setImageSize(QSize(1280, 720));
     setTileSize(QSize(128, 128));
@@ -17,7 +15,6 @@ HTracer3::~HTracer3()
 {
     deleteColliders();
     deleteShaders();
-    deleteBoundingTree();
 }
 
 QImage HTracer3::render()
@@ -32,11 +29,11 @@ QImage HTracer3::render()
 
     HTileController tileController(imageSize_, tileSize_);
 
-    if (boundingTreeHead_ == 0)
+    if (bvh.isEmpty())
     {
         emit onRenderMessage("Building boudary tree...");
         timer.start();
-        buildBoundingTree();
+        bvh.build(colliders_);
         emit onRenderMessage(tr("Ok. Time: %0.").arg(timer.elapsed()));
     }
     else
@@ -192,61 +189,6 @@ void HTracer3::deleteColliders()
     colliders_.clear();
 }
 
-void HTracer3::buildBoundingTree()
-{
-    deleteBoundingTree();
-
-    QVector<ICollider *> clones;
-
-    for (int i = 0; i < colliders_.length(); i++)
-    {
-        HBoundingSphereCollider *hbsc = new HBoundingSphereCollider();
-        hbsc->addCollider(colliders_.at(i)->clone());
-
-        clones.append(hbsc);
-    }
-
-    while (clones.length() != 1)
-    {
-        int closestToFirstIndex = 1;
-
-        float dist = clones.at(0)->getBoundingSphere().center()
-                .distanceToPoint(clones.at(closestToFirstIndex)->getBoundingSphere().center());
-
-        for (int i = 1; i < clones.length(); i++)
-        {
-            float currentDist = clones.at(0)->getBoundingSphere().center()
-                    .distanceToPoint(clones.at(i)->getBoundingSphere().center());
-
-            if (currentDist < dist)
-            {
-                closestToFirstIndex = i;
-                dist = currentDist;
-            }
-        }
-
-        HBoundingSphereCollider *hbsc = new HBoundingSphereCollider();
-        hbsc->addCollider(clones.at(0));
-        hbsc->addCollider(clones.at(closestToFirstIndex));
-
-        clones.removeAt(closestToFirstIndex);
-        clones.removeAt(0);
-
-        clones.append(hbsc);
-    }
-
-    boundingTreeHead_ = clones.at(0);
-}
-
-void HTracer3::deleteBoundingTree()
-{
-    if (boundingTreeHead_ != 0)
-    {
-        delete boundingTreeHead_;
-        boundingTreeHead_ = 0;
-    }
-}
-
 void HTracer3::deleteShaders()
 {
     QList<IShader *> pointers = shaders_.values();
@@ -290,7 +232,7 @@ QColor HTracer3::traceRay(const HRay &ray, QStack<IShader *> shaderStack) const
 {
     QColor resultColor;
 
-    bool isCollisionExist = boundingTreeHead_->processCollision(ray, *this, resultColor, shaderStack);
+    bool isCollisionExist = bvh.head()->processCollision(ray, *this, resultColor, shaderStack);
 
     if (!isCollisionExist)
     {

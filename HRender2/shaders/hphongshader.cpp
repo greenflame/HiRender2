@@ -22,7 +22,7 @@ QColor HPhongShader::process(const HCollision &collision, const HTracer3 &tracer
         QVector3D shadowRayCp;
         bool isLampVisible = false;
 
-        if (tracer.boundingTreeHead_->detectCollision(shadowRay, shadowRayCp))
+        if (tracer.bvh.head()->detectCollision(shadowRay, shadowRayCp))
         {
             if ((collision.point() - shadowRayCp).length() > (collision.point() - currentLamp).length())
             {

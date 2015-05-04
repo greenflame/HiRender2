@@ -32,4 +32,4 @@ private:
     QVector3D directionToEye_;
 };
 
-#endif // HCOLLISONINFO_H
+#endif // HCOLLISON_H

@@ -29,7 +29,7 @@ QColor HAmbientOcclusionShader::process(const HCollision &collision, const HTrac
             randomDirection = -randomDirection;
 
         HRay randomRay(collision.point(), randomDirection);
-        if (tracer.boundingTreeHead_->detectCollision(randomRay))
+        if (tracer.bvh.head()->detectCollision(randomRay))
             intersectedRays++;
     }
 

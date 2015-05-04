@@ -1,16 +1,16 @@
+/*
+ * Interface for all shaders.
+ */
+
 #ifndef ISHADER_H
 #define ISHADER_H
 
 #include <QColor>
 #include <QStack>
 
-#include "hcollision.h"
+#include "geometry/hcollision.h"
 
 class HTracer3;
-
-/*
- * Shader interface.
- */
 
 class IShader
 {

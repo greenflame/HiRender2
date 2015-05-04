@@ -18,30 +18,27 @@ SOURCES += main.cpp\
     sscene.cpp \
     spolygon.cpp \
     smaterial.cpp \
-    hfrustum.cpp \
-    hray.cpp \
-    hsphere.cpp \
     colliders/icollider.cpp \
     colliders/hboundingspherecollider.cpp \
     colliders/hpolygoncollider.cpp \
     shaders/hmirrorshader.cpp \
     shaders/hphongshader.cpp \
     shaders/hskyshader.cpp \
-    shaders/ishader.cpp \
-    hcollision.cpp \
-    math/haccuracy.cpp \
     htilecontroller.cpp \
     shaders/hambientocclusionshader.cpp \
-    shaders/hrefractionshader.cpp
+    shaders/hrefractionshader.cpp \
+    geometry/hray.cpp \
+    geometry/hcollision.cpp \
+    geometry/hfrustum.cpp \
+    geometry/hsphere.cpp \
+    shaders/ishader.cpp \
+    hbvh.cpp
 
 HEADERS  += mainwindow.h \
     htracer3.h \
     sscene.h \
     spolygon.h \
     smaterial.h \
-    hfrustum.h \
-    hray.h \
-    hsphere.h \
     colliders/icollider.h \
     colliders/hboundingspherecollider.h \
     colliders/hpolygoncollider.h \
@@ -49,12 +46,15 @@ HEADERS  += mainwindow.h \
     shaders/hmirrorshader.h \
     shaders/hphongshader.h \
     shaders/hskyshader.h \
-    hcollision.h \
-    math/haccuracy.h \
     shaders/hshaders.h \
     colliders/hcolliders.h \
     htilecontroller.h \
     shaders/hambientocclusionshader.h \
-    shaders/hrefractionshader.h
+    shaders/hrefractionshader.h \
+    geometry/hray.h \
+    geometry/hcollision.h \
+    geometry/hfrustum.h \
+    geometry/hsphere.h \
+    hbvh.h
 
 FORMS    += mainwindow.ui

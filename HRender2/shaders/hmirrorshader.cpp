@@ -19,7 +19,7 @@ HMirrorShader::~HMirrorShader()
 QColor HMirrorShader::process(const HCollision &collision, const HTracer3 &tracer, QStack<IShader *> &shaderStack) const
 {
     if (shaderStack.length() > tracer.rayLifeTime())
-        return Qt::red; //!!!!!!!
+        return tracer.backgroundColor();
 
     QVector3D reflectedDirection = reflectRay(-collision.directionToEye(), collision.normal());
     int r = 0, g = 0, b = 0;

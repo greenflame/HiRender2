@@ -19,9 +19,11 @@ HRay::~HRay()
 
 void HRay::transform(const QMatrix4x4 &m)
 {
+    // Location and rotation
     QVector4D originTmp(origin_, 1);
     setOrigin(QVector3D(m * originTmp));
 
+    // Only rotation
     QVector4D directionTmp(direction_, 0);
     setDirection(QVector3D(m * directionTmp));
 }
