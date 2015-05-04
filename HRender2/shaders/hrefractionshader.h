@@ -24,6 +24,8 @@ public:
 
 private:
     float ior_;
+
+    QVector3D refract(const QVector3D &incidentVec, const QVector3D &normal, float eta) const;
 };
 
 #endif // HREFRACTIONSHADER_H

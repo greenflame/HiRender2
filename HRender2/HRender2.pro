@@ -32,7 +32,8 @@ SOURCES += main.cpp\
     geometry/hfrustum.cpp \
     geometry/hsphere.cpp \
     shaders/ishader.cpp \
-    hbvh.cpp
+    hbvh.cpp \
+    shaders/hmixshader.cpp
 
 HEADERS  += mainwindow.h \
     htracer3.h \
@@ -55,6 +56,7 @@ HEADERS  += mainwindow.h \
     geometry/hcollision.h \
     geometry/hfrustum.h \
     geometry/hsphere.h \
-    hbvh.h
+    hbvh.h \
+    shaders/hmixshader.h
 
 FORMS    += mainwindow.ui

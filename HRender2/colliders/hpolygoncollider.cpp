@@ -24,10 +24,19 @@ HPolygonCollider::HPolygonCollider(const HPolygonCollider &collider)
     *this = collider;
 }
 
+// http://www.ray-tracing.ru/articles213.html
+// http://en.wikipedia.org/wiki/Möller–Trumbore_intersection_algorithm
 bool HPolygonCollider::detectCollision(const HRay &ray, QVector3D &collisionPoint, ICollider **collider) const
 {
-    float EPSILON = 0.0001; //xm..
     *collider = const_cast<HPolygonCollider*>(this);
+
+    float EPSILON = 0.0001; //xm..
+
+    // Ray origin too close to plane
+    if (ray.origin().distanceToPlane(v1_, v2_, v3_) < EPSILON)
+    {
+        return false;
+    }
 
     // Find vectors for two edges sharing V1
     QVector3D e1 = v2_ - v1_;

@@ -12,7 +12,7 @@ class HAmbientOcclusionShader : public IShader
 {
 public:
     HAmbientOcclusionShader();
-    HAmbientOcclusionShader(int iterations);
+    HAmbientOcclusionShader(int iterations, QColor diffuseColor);
     ~HAmbientOcclusionShader();
 
     // IShader interface
@@ -21,8 +21,12 @@ public:
     int iterations() const;
     void setIterations(int iterations);
 
+    QColor diffuseColor() const;
+    void setDiffuseColor(const QColor &diffuseColor);
+
 private:
     int iterations_;
+    QColor diffuseColor_;
 
 };
 

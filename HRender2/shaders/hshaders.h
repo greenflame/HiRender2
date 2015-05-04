@@ -4,6 +4,8 @@
 
 #include "shaders/ishader.h"
 
+#include "shaders/hmixshader.h"
+
 #include "shaders/hambientocclusionshader.h"
 #include "shaders/hmirrorshader.h"
 #include "shaders/hphongshader.h"

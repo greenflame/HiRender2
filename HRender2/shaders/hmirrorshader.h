@@ -11,9 +11,7 @@ public:
     HMirrorShader(float spreadAngle, int iterations);
     ~HMirrorShader();
 
-    /*
-     *  IShader interface
-     */
+    // IShader interface
     QColor process(const HCollision &collision, const HTracer3 &tracer, QStack<IShader *> &shaderStack) const;
 
     float spreadAngle() const;
@@ -26,8 +24,7 @@ private:
     float spreadAngle_;
     int iterations_;
 
-    static QVector3D reflectRay(QVector3D ray, QVector3D normal);
-    static QVector3D projectPointOnLine(QVector3D l1, QVector3D l2, QVector3D p);
+    static QVector3D reflectRay(const QVector3D &ray, const QVector3D &normal);
 };
 
 #endif // HMIRRORSHADER_H

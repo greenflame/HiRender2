@@ -38,10 +38,12 @@ public:
                     const QVector3D &n1, const QVector3D &n2, const QVector3D &n3, const QString &shaderName = "default");
 
     // Shaders
+    void addMixShader(const QString &name, const QString &shader1, const QString &shader2, float k1, float k2);
+
     void addPhongShader(const QString &name, const QColor &diffuseColor);
     void addMirrorShader(const QString &name, float spreadAngle, int iterations);
     void addRefractionShader(const QString &name, float ior);
-    void addAmbientOcclusionShader(const QString &name, int iterations);
+    void addAmbientOcclusionShader(const QString &name, int iterations, QColor diffuseColor);
 
     // Lights
     void addPointLight(const QVector3D &position);
@@ -77,6 +79,8 @@ signals:
 
 private:
     friend class HSkyShader;
+
+    friend class HMixShader;
 
     friend class HPhongShader;
     friend class HMirrorShader;

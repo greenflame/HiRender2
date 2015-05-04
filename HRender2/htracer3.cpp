@@ -79,6 +79,11 @@ void HTracer3::addPolygon(const QVector3D &v1, const QVector3D &v2, const QVecto
     colliders_.append(collider);
 }
 
+void HTracer3::addMixShader(const QString &name, const QString &shader1, const QString &shader2, float k1, float k2)
+{
+    shaders_.insert(name, new HMixShader(shaders_[shader1], shaders_[shader2], k1, k2));
+}
+
 void HTracer3::addPhongShader(const QString &name, const QColor &diffuseColor)
 {
     shaders_.insert(name, new HPhongShader(diffuseColor));
@@ -94,9 +99,9 @@ void HTracer3::addRefractionShader(const QString &name, float ior)
     shaders_.insert(name, new HRefractionShader(ior));
 }
 
-void HTracer3::addAmbientOcclusionShader(const QString &name, int iterations)
+void HTracer3::addAmbientOcclusionShader(const QString &name, int iterations, QColor diffuseColor)
 {
-    shaders_.insert(name, new HAmbientOcclusionShader(iterations));
+    shaders_.insert(name, new HAmbientOcclusionShader(iterations, diffuseColor));
 }
 
 void HTracer3::addPointLight(const QVector3D &position)

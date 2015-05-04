@@ -19,7 +19,10 @@ HMirrorShader::~HMirrorShader()
 QColor HMirrorShader::process(const HCollision &collision, const HTracer3 &tracer, QStack<IShader *> &shaderStack) const
 {
     if (shaderStack.length() > tracer.rayLifeTime())
+    {
+        qDebug() << "interuption in mirror shader" << qrand();
         return tracer.backgroundColor();
+    }
 
     QVector3D reflectedDirection = reflectRay(-collision.directionToEye(), collision.normal());
     int r = 0, g = 0, b = 0;
@@ -67,22 +70,8 @@ void HMirrorShader::setIterations(int iterations)
     iterations_ = iterations;
 }
 
-QVector3D HMirrorShader::reflectRay(QVector3D ray, QVector3D normal)
+// http://asawicki.info/news_1301_reflect_and_refract_functions.html
+QVector3D HMirrorShader::reflectRay(const QVector3D &ray, const QVector3D &normal)
 {
-    QVector3D inplaneVector = QVector3D::crossProduct(ray, normal);
-    QVector3D rayProjection = QVector3D::crossProduct(normal, inplaneVector);
-    QVector3D pointProjection = projectPointOnLine(QVector3D(0, 0, 0), rayProjection, ray);
-    QVector3D translateVector = pointProjection - ray;
-    return ray + translateVector * 2;
+    return ray - 2.f * QVector3D::dotProduct(ray, normal) * normal;
 }
-
-QVector3D HMirrorShader::projectPointOnLine(QVector3D l1, QVector3D l2, QVector3D p)
-{
-    QVector3D lineDirection = l2 - l1;
-    QVector3D v = p - l1;
-    float scale = QVector3D::dotProduct(v, lineDirection) / QVector3D::dotProduct(lineDirection, lineDirection);
-    return l1 + lineDirection * scale;
-}
-
-
-

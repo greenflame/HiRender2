@@ -5,9 +5,10 @@ HAmbientOcclusionShader::HAmbientOcclusionShader()
 
 }
 
-HAmbientOcclusionShader::HAmbientOcclusionShader(int iterations)
+HAmbientOcclusionShader::HAmbientOcclusionShader(int iterations, QColor diffuseColor)
 {
     setIterations(iterations);
+    setDiffuseColor(diffuseColor);
 }
 
 HAmbientOcclusionShader::~HAmbientOcclusionShader()
@@ -34,7 +35,7 @@ QColor HAmbientOcclusionShader::process(const HCollision &collision, const HTrac
     }
 
     float k = 1 - (float)intersectedRays / iterations_;
-    return QColor(255 * k, 255 * k, 255 * k);
+    return HTracer3::mixColors(diffuseColor_, Qt::black, k, 1 - k);
 }
 
 int HAmbientOcclusionShader::iterations() const
@@ -46,3 +47,13 @@ void HAmbientOcclusionShader::setIterations(int iterations)
 {
     iterations_ = iterations;
 }
+QColor HAmbientOcclusionShader::diffuseColor() const
+{
+    return diffuseColor_;
+}
+
+void HAmbientOcclusionShader::setDiffuseColor(const QColor &diffuseColor)
+{
+    diffuseColor_ = diffuseColor;
+}
+
