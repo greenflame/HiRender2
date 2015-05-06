@@ -29,17 +29,17 @@ QImage HTracer3::render()
 
     HTileController tileController(imageSize_, tileSize_);
 
-    if (bvh.isEmpty())
+//    if (bvh.isEmpty())
     {
         emit onRenderMessage("Building boudary tree...");
         timer.start();
         bvh.build(colliders_);
         emit onRenderMessage(tr("Ok. Time: %0.").arg(timer.elapsed()));
     }
-    else
-    {
-        emit onRenderMessage("Boundary tree already builded.");
-    }
+//    else
+//    {
+//        emit onRenderMessage("Boundary tree already builded.");
+//    }
 
     emit onRenderMessage("Tracing...");
     int renderingTime = 0;
@@ -77,6 +77,11 @@ void HTracer3::addPolygon(const QVector3D &v1, const QVector3D &v2, const QVecto
     collider->setUseNormals(true);
 
     colliders_.append(collider);
+}
+
+void HTracer3::clearColliders()
+{
+    deleteColliders();
 }
 
 void HTracer3::addMixShader(const QString &name, const QString &shader1, const QString &shader2, float k1, float k2)

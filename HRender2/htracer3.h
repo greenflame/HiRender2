@@ -37,6 +37,8 @@ public:
     void addPolygon(const QVector3D &v1, const QVector3D &v2, const QVector3D &v3,
                     const QVector3D &n1, const QVector3D &n2, const QVector3D &n3, const QString &shaderName = "default");
 
+    void clearColliders();
+
     // Shaders
     void addMixShader(const QString &name, const QString &shader1, const QString &shader2, float k1, float k2);
 

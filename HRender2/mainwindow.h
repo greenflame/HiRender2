@@ -33,34 +33,15 @@ public:
     ~MainWindow();
 
 public slots:
-    void on_pushButton_loadScene_clicked();
-    void on_pushButton_render_clicked();
-
-    void on_pushButton_test_clicked();
+    void on_pushButton_process_clicked();
+    void on_pushButton_add_clicked();
 
     void onTemporaryImageUpdated(QImage image);
     void onRenderMessage(QString message);
 
-    void previewUpdate();
-
-    void mousePressEvent(QMouseEvent *event);
-    void mouseMoveEvent(QMouseEvent *event);
-
 private:
     Ui::MainWindow *ui;
 
-    bool loadObj(HTracer3 &tracer, const QString &fileName);
-    bool loadMtl(HTracer3 &tracer, const QString &fileName);
-
-    HTracer3 tracer;
-    bool isSceneLoaded;
-    int xRot, yRot;
-    int xPrev, yPrev;
-    bool isPreviewRendered;
-
-    QSize resultSize;
-    float previewScale;
-    float distanceFromCenter;
 };
 
 #endif // MAINWINDOW_H
